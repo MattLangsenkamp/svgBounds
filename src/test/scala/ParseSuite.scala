@@ -33,7 +33,7 @@ class ParseSuite extends munit.FunSuite {
     ("M 1, 2 ", NonEmptyList[M](M(1, 2), List())),
     ("M1, 2 15 255", NonEmptyList[M](M(1, 2), List(M(15, 255)))),
     ("M 1.4, 2 15 255", NonEmptyList[M](M(1.4, 2), List(M(15, 255)))),
-  ).foreach(testCommand(_, _, Parse.movetoM))
+  ).foreach(testCommand(_, _, PathParse.movetoM))
 
   List(
     ("m 1 2", NonEmptyList[m_](m_(1, 2), List())),
@@ -43,7 +43,7 @@ class ParseSuite extends munit.FunSuite {
     ("m1, 2 ", NonEmptyList[m_](m_(1, 2), List())),
     ("m 1, 2 15 255", NonEmptyList[m_](m_(1, 2), List(m_(15, 255)))),
     ("m 1.4, 2 15 255", NonEmptyList[m_](m_(1.4, 2), List(m_(15, 255)))),
-  ).foreach(testCommand(_, _, Parse.movetoM_))
+  ).foreach(testCommand(_, _, PathParse.movetoM_))
 
   // ClosePath tests
 
@@ -56,7 +56,7 @@ class ParseSuite extends munit.FunSuite {
     ("L 1, 2 ", NonEmptyList[L](L(1, 2), List())),
     ("L1, 2 15 255", NonEmptyList[L](L(1, 2), List(L(15, 255)))),
     ("L 1.4, 2 15 255", NonEmptyList[L](L(1.4, 2), List(L(15, 255)))),
-  ).foreach(testCommand(_, _, Parse.linetoL))
+  ).foreach(testCommand(_, _, PathParse.linetoL))
 
   List(
     ("l 1 2", NonEmptyList[l_](l_(1, 2), List())),
@@ -66,7 +66,7 @@ class ParseSuite extends munit.FunSuite {
     ("l 1, 2 ", NonEmptyList[l_](l_(1, 2), List())),
     ("l 1, 2 15 255", NonEmptyList[l_](l_(1, 2), List(l_(15, 255)))),
     ("l 1.4, 2 15 255", NonEmptyList[l_](l_(1.4, 2), List(l_(15, 255)))),
-  ).foreach(testCommand(_, _, Parse.linetoL_))
+  ).foreach(testCommand(_, _, PathParse.linetoL_))
 
   // Horizontal LineTo tests
   List(
@@ -77,7 +77,7 @@ class ParseSuite extends munit.FunSuite {
     ("H 1, 2 ", NonEmptyList[H](H(1), List(H(2)))),
     ("H1, 2 15 255", NonEmptyList[H](H(1), List(H(2), H(15), H(255)))),
     ("H 1.4, 2 15 255", NonEmptyList[H](H(1.4), List(H(2), H(15), H(255)))),
-  ).foreach(testCommand(_, _, Parse.horizontalLinetoH))
+  ).foreach(testCommand(_, _, PathParse.horizontalLinetoH))
 
   List(
     ("h 1", NonEmptyList[h_](h_(1), List())),
@@ -87,7 +87,7 @@ class ParseSuite extends munit.FunSuite {
     ("h1, 2 ", NonEmptyList[h_](h_(1), List(h_(2)))),
     ("h 1, 2 15 255", NonEmptyList[h_](h_(1), List(h_(2), h_(15), h_(255)))),
     ("h 1.4, 2 15 255", NonEmptyList[h_](h_(1.4), List(h_(2), h_(15), h_(255)))),
-  ).foreach(testCommand(_, _, Parse.horizontalLinetoH_))
+  ).foreach(testCommand(_, _, PathParse.horizontalLinetoH_))
 
   // Vertical LineTo tests
   List(
@@ -98,7 +98,7 @@ class ParseSuite extends munit.FunSuite {
     ("V1, 2 ", NonEmptyList[V](V(1), List(V(2)))),
     ("V 1, 2 15 255", NonEmptyList[V](V(1), List(V(2), V(15), V(255)))),
     ("V 1.4, 2 15 255", NonEmptyList[V](V(1.4), List(V(2), V(15), V(255)))),
-  ).foreach(testCommand(_, _, Parse.verticalLinetoV))
+  ).foreach(testCommand(_, _, PathParse.verticalLinetoV))
 
   List(
     ("v 1", NonEmptyList[v_](v_(1), List())),
@@ -108,7 +108,7 @@ class ParseSuite extends munit.FunSuite {
     ("v 1, 2 ", NonEmptyList[v_](v_(1), List(v_(2)))),
     ("v 1, 2 15 255", NonEmptyList[v_](v_(1), List(v_(2), v_(15), v_(255)))),
     ("v 1.4, 2 15 255", NonEmptyList[v_](v_(1.4), List(v_(2), v_(15), v_(255)))),
-  ).foreach(testCommand(_, _, Parse.verticalLinetoV_))
+  ).foreach(testCommand(_, _, PathParse.verticalLinetoV_))
 
   // curveto commands
   List(
@@ -121,7 +121,7 @@ class ParseSuite extends munit.FunSuite {
     ("C    1 1 2 2 3 ,3 1 1  2.55 2 3 ,3", NonEmptyList[C](C(1,1,2,2,3,3), List(C(1,1,2.55,2,3,3)))),
     ("C    1 1 2 2 3 ,3 1 1  2.55 2 3 ,3 5 5,   9 9, 1392 0", NonEmptyList[C](C(1,1,2,2,3,3), List(C(1,1,2.55,2,3,3),
       C(5,5,9,9,1392,0)))),
-  ).foreach(testCommand(_, _, Parse.curveToC))
+  ).foreach(testCommand(_, _, PathParse.curveToC))
 
   List(
     ("c 1 1 2 2 3 3", NonEmptyList[c_](c_(1,1,2,2,3,3), List())),
@@ -133,7 +133,7 @@ class ParseSuite extends munit.FunSuite {
     ("c    1 1 2 2 3 ,3 1 1  2.55 2 3 ,3", NonEmptyList[c_](c_(1,1,2,2,3,3), List(c_(1,1,2.55,2,3,3)))),
     ("c     1 1 2 2 3 ,3 1 1  2.55 2 3 ,3 5 5,   9 9, 1392 0", NonEmptyList[c_](c_(1,1,2,2,3,3), List(c_(1,1,2.55,2,3,3),
       c_(5,5,9,9,1392,0)))),
-  ).foreach(testCommand(_, _, Parse.curveToC_))
+  ).foreach(testCommand(_, _, PathParse.curveToC_))
 
   // smooth curveto
   List(
@@ -146,7 +146,7 @@ class ParseSuite extends munit.FunSuite {
     ("S    1 1 2 2  1 1  2.55 2 ", NonEmptyList[S](S(1,1,2,2), List(S(1,1,2.55,2)))),
     ("S     1 1 2 2  1 1  2.55 2  5 5,  1392 0", NonEmptyList[S](S(1,1,2,2), List(S(1,1,2.55,2),
       S(5,5,1392,0)))),
-  ).foreach(testCommand(_, _, Parse.smoothCurvetoS))
+  ).foreach(testCommand(_, _, PathParse.smoothCurvetoS))
 
   List(
     ("s 1 1 2 2", NonEmptyList[s_](s_(1,1,2,2), List())),
@@ -158,7 +158,7 @@ class ParseSuite extends munit.FunSuite {
     ("s    1 1 2 2  1 1  2.55 2 ", NonEmptyList[s_](s_(1,1,2,2), List(s_(1,1,2.55,2)))),
     ("s     1 1 2 2  1 1  2.55 2  5 5,  1392 0", NonEmptyList[s_](s_(1,1,2,2), List(s_(1,1,2.55,2),
       s_(5,5,1392,0)))),
-  ).foreach(testCommand(_, _, Parse.smoothCurvetoS_))
+  ).foreach(testCommand(_, _, PathParse.smoothCurvetoS_))
 
   // bezier curveto
   List(
@@ -171,7 +171,7 @@ class ParseSuite extends munit.FunSuite {
     ("Q    1 1 2 2  1 1  2.55 2 ", NonEmptyList[Q](Q(1,1,2,2), List(Q(1,1,2.55,2)))),
     ("Q     1 1 2 2  1 1  2.55 2  5 5,  1392 0", NonEmptyList[Q](Q(1,1,2,2), List(Q(1,1,2.55,2),
       Q(5,5,1392,0)))),
-  ).foreach(testCommand(_, _, Parse.quadraticBezierCurvetoQ))
+  ).foreach(testCommand(_, _, PathParse.quadraticBezierCurvetoQ))
 
   List(
     ("q 1 1 2 2", NonEmptyList[q_](q_(1,1,2,2), List())),
@@ -183,7 +183,7 @@ class ParseSuite extends munit.FunSuite {
     ("q    1 1 2 2  1 1  2.55 2 ", NonEmptyList[q_](q_(1,1,2,2), List(q_(1,1,2.55,2)))),
     ("q     1 1 2 2  1 1  2.55 2  5 5,  1392 0", NonEmptyList[q_](q_(1,1,2,2), List(q_(1,1,2.55,2),
       q_(5,5,1392,0)))),
-  ).foreach(testCommand(_, _, Parse.quadraticBezierCurvetoQ_))
+  ).foreach(testCommand(_, _, PathParse.quadraticBezierCurvetoQ_))
 
   // smooth curveto
   List(
@@ -194,7 +194,7 @@ class ParseSuite extends munit.FunSuite {
     ("T 1, 2 ", NonEmptyList[T](T(1, 2), List())),
     ("T 1, 2 15 255", NonEmptyList[T](T(1, 2), List(T(15, 255)))),
     ("T 1.4, 2 15 255", NonEmptyList[T](T(1.4, 2), List(T(15, 255)))),
-  ).foreach(testCommand(_, _, Parse.smoothQuadraticBezierCurvetoT))
+  ).foreach(testCommand(_, _, PathParse.smoothQuadraticBezierCurvetoT))
 
   List(
     ("t 1 2", NonEmptyList[t_](t_(1, 2), List())),
@@ -204,7 +204,7 @@ class ParseSuite extends munit.FunSuite {
     ("t 1, 2 ", NonEmptyList[t_](t_(1, 2), List())),
     ("t 1, 2 15 255", NonEmptyList[t_](t_(1, 2), List(t_(15, 255)))),
     ("t 1.4, 2 15 255", NonEmptyList[t_](t_(1.4, 2), List(t_(15, 255)))),
-  ).foreach(testCommand(_, _, Parse.smoothQuadraticBezierCurvetoT_))
+  ).foreach(testCommand(_, _, PathParse.smoothQuadraticBezierCurvetoT_))
 
   // arc
   List(
@@ -213,7 +213,7 @@ class ParseSuite extends munit.FunSuite {
     ("A 1  2 3    1 1   " +
       "5 6", NonEmptyList[A](A(1, 2, 3, 1, 1, 5, 6), List())),
     ("A 1 2 3 1 1 5 6 1 2 3 1 1 5 6 ", NonEmptyList[A](A(1, 2, 3, 1, 1, 5, 6), List(A(1, 2, 3, 1, 1, 5, 6)))),
-  ).foreach(testCommand(_, _, Parse.ellipticalArcA))
+  ).foreach(testCommand(_, _, PathParse.ellipticalArcA))
 
   List(
     ("a 1 2 3 1 1 5 6", NonEmptyList[a_](a_(1, 2, 3, 1.toShort, 1.toShort, 5, 6), List())),
@@ -221,14 +221,14 @@ class ParseSuite extends munit.FunSuite {
     ("a 1  2 3    1 1   " +
       "5 6", NonEmptyList[a_](a_(1, 2, 3, 1, 1, 5, 6), List())),
     ("a 1 2 3 1 1 5 6 1 2 3 1 1 5 6 ", NonEmptyList[a_](a_(1, 2, 3, 1, 1, 5, 6), List(a_(1, 2, 3, 1, 1, 5, 6)))),
-  ).foreach(testCommand(_, _, Parse.ellipticalArcA_))
+  ).foreach(testCommand(_, _, PathParse.ellipticalArcA_))
 
   List(
     ("z", NonEmptyList[Z](Z(), List())),
     ("Z", NonEmptyList[Z](Z(), List())),
     ("z ", NonEmptyList[Z](Z(), List())),
     ("Z ", NonEmptyList[Z](Z(), List())),
-  ).foreach(testCommand(_, _, Parse.closePath))
+  ).foreach(testCommand(_, _, PathParse.closePath))
 
   List(
     ("Z ", NonEmptyList[Z](Z(), List())),
@@ -256,12 +256,12 @@ class ParseSuite extends munit.FunSuite {
     ("L 1.4, 2 15 255E1", NonEmptyList[L](L(1.4, 2), List(L(15, 2550)))),
     ("m 1.4, 2 15 255", NonEmptyList[m_](m_(1.4, 2), List(m_(15, 255)))),
     ("M 1.4, 2 15 255", NonEmptyList[M](M(1.4, 2), List(M(15, 255)))),
-  ).foreach(testCommand(_, _, Parse.svgCommand))
+  ).foreach(testCommand(_, _, PathParse.svgCommand))
 
   List(
     ("M 1, 2 V 1", NonEmptyList(M(1,2), List(V(1)))),
     ("M 1, 2 V 1 V 2E2", NonEmptyList(M(1,2), List(V(1),V(200) ))),
     ("M 1, 2 1, 2 V 1 V 2E2", NonEmptyList(M(1,2), List(M(1,2),V(1),V(200) ))),
     ("M 1, 2 1, 2 V 1 V 2E2 m 22 33", NonEmptyList(M(1,2), List(M(1,2),V(1),V(200), m_(22,33) ))),
-  ).foreach(testCommand0(_, _, Parse.svgCommandRep))
+  ).foreach(testCommand0(_, _, PathParse.svgCommandRep))
 }

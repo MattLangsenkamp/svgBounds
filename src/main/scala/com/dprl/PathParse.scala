@@ -2,7 +2,9 @@ package com.dprl
 import cats.data.NonEmptyList
 import cats.parse.{Parser, Parser0}
 import cats.parse.Parser.{char, charIn, string}
-object Parse {
+
+
+object PathParse {
 
 
   // the following was derived from the grammar provided in https://svgwg.org/svg2-draft/paths.html#PathElement
