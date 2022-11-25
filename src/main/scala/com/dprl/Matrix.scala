@@ -7,6 +7,4 @@ case class Matrix(a: Float) {
   @targetName("matMul")
   def * (other: Matrix): Matrix = ???
 
-  def moveCoordX() = ???
-  def moveCoordY() = ???
 }

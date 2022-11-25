@@ -112,9 +112,23 @@ object CurveUtils {
       + (3 * oneMinusT * pow(t, 2) * p2)
       + (pow(t, 3) * p3)
   }
+  def ellipticalArcBoundingBox(
+                                curX: Double, curY:Double,
+                                rx: Double, ry: Double,
+                                xAxisRotation: Double,
+                                largeArcFlag: Short,
+                                sweepFlag: Short,
+                                endX: Double, endY: Double): Bounds = {
+    if (sweepFlag == 0) Bounds(curX, curY, endX, endY)
+    else {
+      val phi = xAxisRotation.toRadians
+      xAxisRotation
+    }
+
+  }
 
   // solution adapted from http://fridrich.blogspot.com/2011/06/bounding-box-of-svg-elliptical-arc.html
-  def ellipticalArcBoundingBox(
+  def ellipticalArcBoundingBox2(
                                 curX: Double, curY:Double,
                                 rx: Double, ry: Double,
                                 xAxisRotation: Double,
@@ -142,7 +156,7 @@ object CurveUtils {
           return Bounds(math.min(curX, endX), math.min(curY, endY), math.max(curX, endX), math.max(curY, endY))
         }
         rY=math.sqrt(nRadicant)
-        rY=ratio*rY
+        rX=ratio*rY
       } else {
         val factor = (if (largeArcFlag == sweepFlag) -1.0 else 1)*math.sqrt(radicant)
         cXPrime = factor*rX*y1Prime/rY
