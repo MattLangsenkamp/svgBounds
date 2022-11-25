@@ -6,17 +6,17 @@ object CurveUtils {
   // solution adapted from https://github.com/meerk40t/svgelements/blob/master/svgelements/svgelements.py
   def quadraticBezierBoundingBox(sPointX: Double, sPointY: Double,
                                  cPointX: Double, cPointY: Double,
-                                 endPointX: Double, endPointY: Double): (Double, Double, Double, Double) = {
+                                 endPointX: Double, endPointY: Double): Bounds = {
 
     def pointX(t: Double) = (pow(1-t, 2)*sPointX) + (2*(1-t)*t*cPointX) + pow(t,2)*endPointX
     def pointY(t: Double) = (pow(1-t, 2)*sPointY) + (2*(1-t)*t*cPointY) + pow(t,2)*endPointY
     val nX = sPointX-cPointX
-    val dX = sPointX-2*cPointX+ endPointX
+    val dX = sPointX-2*cPointX + endPointX
     val tX = if (dX != 0) {
       nX/dX
     } else 0.5
 
-    val xValues = if (tX<0)
+    val xValues = if (0<tX && tX<1)
       List(sPointX, endPointX, pointX(tX))
     else
       List(sPointX, endPointX)
@@ -27,19 +27,19 @@ object CurveUtils {
       nY/dY
     } else 0.5
 
-    val yValues = if (tY<0)
+    val yValues = if (0<tY && tY<1)
       List(sPointY, endPointY, pointY(tY))
     else
       List(sPointY, endPointY)
 
-    (xValues.min, yValues.min, xValues.max, yValues.max)
+    Bounds(xValues.min, yValues.min, xValues.max, yValues.max)
   }
 
   // solution adapted from https://eliot-jones.com/2019/12/cubic-bezier-curve-bounding-boxes
   def cubicBezierBoundingBox(sPointX: Double, sPointY: Double,
                              cPoint1X: Double, cPoint1Y: Double,
                              cPoint2X: Double, cPoint2Y: Double,
-                             endPointX: Double, endPointY: Double): (Double, Double, Double, Double) = {
+                             endPointX: Double, endPointY: Double): Bounds = {
     val (solX1, solX2) = solveQuadratic(sPointX, cPoint1X, cPoint2X, endPointX)
     val (solY1, solY2) = solveQuadratic(sPointY, cPoint1Y, cPoint2Y, endPointY)
 
@@ -69,7 +69,7 @@ object CurveUtils {
       maxY = max(maxY, v)
     })
 
-    (minX, minY, maxX, maxY)
+    Bounds(minX, minY, maxX, maxY)
   }
 
   def solveQuadratic(p0: Double, p1: Double, p2: Double, p3: Double): (Option[Double], Option[Double]) = {
@@ -120,12 +120,12 @@ object CurveUtils {
                                 xAxisRotation: Double,
                                 largeArcFlag: Short,
                                 sweepFlag: Short,
-                                endX: Double, endY: Double): (Double, Double, Double, Double) = {
+                                endX: Double, endY: Double): Bounds = {
     var rX = if(rx < 0.0) -rx else rx
     var rY = if(ry < 0.0) -ry else ry
 
     if(rX == 0 || rY == 0) {
-      (math.min(curX, endX), math.min(curY, endY), math.max(curX, endX), math.max(curY, endY))
+      Bounds(math.min(curX, endX), math.min(curY, endY), math.max(curX, endX), math.max(curY, endY))
     } else {
       val x1Prime = math.cos(xAxisRotation)*(curX-endX)/2 + math.sin(xAxisRotation)*(curY-endY)/2
       val y1Prime = -math.sin(xAxisRotation)*(curX-endX)/2 + math.cos(xAxisRotation)*(curY-endY)/2
@@ -139,7 +139,7 @@ object CurveUtils {
         val ratio = rX/rY
         val nRadicant = y1Prime*y1Prime + x1Prime*x1Prime/(ratio*ratio)
         if (nRadicant < 0.0) {
-          return (math.min(curX, endX), math.min(curY, endY), math.max(curX, endX), math.max(curY, endY))
+          return Bounds(math.min(curX, endX), math.min(curY, endY), math.max(curX, endX), math.max(curY, endY))
         }
         rY=math.sqrt(nRadicant)
         rY=ratio*rY
@@ -236,12 +236,11 @@ object CurveUtils {
       if ((!otherArc && (angle1 > tYMax || angle2 < tYMax)) || (otherArc && !(angle1 > tYMax || angle2 < tYMax)))
         yMax = max(curY, endY)
 
-      (xMin, xMin, xMax, yMax)
+      Bounds(xMin, xMin, xMax, yMax)
     }
   }
 
 
   def getAngle(bX: Double, bY: Double): Double =
     (2*math.Pi + (if (bY > 0.0) 1 else -1) * math.acos(bX/math.sqrt(bX*bX+bY*bY))) % (2*math.Pi)
-
 }

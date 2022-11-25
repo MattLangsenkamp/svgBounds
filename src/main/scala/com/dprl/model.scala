@@ -52,3 +52,10 @@ case class A(rx: Float, ry: Float, xAxisRotation: Float, largeArcFlag: Short, sw
 
 case class a_(rx: Float, ry: Float, xAxisRotation: Float, largeArcFlag: Short, sweepFlag: Short, x: Float, y: Float)
   extends SvgCommand
+
+// non path model
+
+case class Bounds(xMin: Double, yMin: Double, xMax: Double, yMax: Double) {
+  def toRectTag: String = s"<rect x=\"$xMin\" y=\"$yMin\" width=\"${xMax-xMin}\" " +
+    s"height=\"${yMax-yMin}\" fill=\"transparent\" stroke=\"black\"/>"
+}
