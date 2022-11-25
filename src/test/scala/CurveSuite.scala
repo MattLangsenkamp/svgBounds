@@ -3,28 +3,21 @@ import com.dprl.*
 import cats.parse.{Parser, Parser0}
 
 class CurveSuite extends munit.FunSuite {
-  def testQuadBezier(bounds: Bounds, startX: Double, startY: Double, com: Q | q_ | T | t_, preCom: Option[Q | q_] )(implicit loc: munit.Location): Unit = {
+  def testQuadBezier(bounds: Bounds, startX: Double, startY: Double, com: Q | q_ | T | t_, preCont: Option[(Double, Double)] )(implicit loc: munit.Location): Unit = {
     test("QuadraticBezierCurve") {
-      com match
-        case c: Q  =>
+      (com, preCont) match
+        case (c: Q, _)  =>
           assert(CurveUtils.quadraticBezierBoundingBox(startX, startY, c.x1, c.y1, c.x, c.y).equals(bounds))
-        case c: q_ =>
+        case (c: q_, _) =>
           assert(CurveUtils.quadraticBezierBoundingBox(startX, startY, startX+c.x1, startY+c.y1, startX+c.x, startY+c.y)
               .equals(bounds))
-        case c: T => preCom match
-          case Some(value) => value match
-            case v: Q => ???
-            case v: q_ => ???
-          case _ => assert(false)
-        case c: t_ => preCom match
-          case Some(value) => value match
-            case v: Q => ???
-            case v: q_ => ???
-          case _ => assert(false)
+        case (c: T, Some(contPt)) => ???
+        case (c: t_, Some(contPt)) => ???
+        case _ => assert(false)
     }
   }
 
-  List[(Bounds, Double, Double, Q | q_ | T | t_, Option[Q | q_])](
+  List[(Bounds, Double, Double, Q | q_ | T | t_, Option[(Double, Double)])](
     (Bounds(10.0,80.0,60.0,120.0), 10, 80, q_(20, 30 ,50, 40), None),
     (Bounds(5.555555555555555,71.0,60.0,120.0), 10, 80, q_(-20, -30 ,50, 40), None),
     (Bounds(10.0,80.0,64.44444444444444,120.0), 10, 80, q_(70, 30 ,50, 40), None),
