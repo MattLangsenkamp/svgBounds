@@ -1,5 +1,5 @@
 package com.dprl
-import scala.math.{max, min, pow, sqrt}
+import scala.math.{max, min, pow, sqrt, sin, cos, tan, atan, acos}
 
 object CurveUtils {
 
@@ -112,23 +112,33 @@ object CurveUtils {
       + (3 * oneMinusT * pow(t, 2) * p2)
       + (pow(t, 3) * p3)
   }
-  def ellipticalArcBoundingBox(
+  /*def ellipticalArcBoundingBox(
                                 curX: Double, curY:Double,
                                 rx: Double, ry: Double,
                                 xAxisRotation: Double,
                                 largeArcFlag: Short,
                                 sweepFlag: Short,
                                 endX: Double, endY: Double): Bounds = {
+
+
+    val phi = xAxisRotation.toRadians
+    val theta = ???
+    val delta = ???
+    val p =
+
     if (sweepFlag == 0) Bounds(curX, curY, endX, endY)
+
+
     else {
-      val phi = xAxisRotation.toRadians
-      xAxisRotation
+      val phi = getRotation()
+      math.cos()
     }
 
   }
+  */
 
   // solution adapted from http://fridrich.blogspot.com/2011/06/bounding-box-of-svg-elliptical-arc.html
-  def ellipticalArcBoundingBox2(
+  def ellipticalArcBoundingBox(
                                 curX: Double, curY:Double,
                                 rx: Double, ry: Double,
                                 xAxisRotation: Double,
@@ -137,12 +147,12 @@ object CurveUtils {
                                 endX: Double, endY: Double): Bounds = {
     var rX = if(rx < 0.0) -rx else rx
     var rY = if(ry < 0.0) -ry else ry
-
+    val phi = xAxisRotation.toRadians
     if(rX == 0 || rY == 0) {
-      Bounds(math.min(curX, endX), math.min(curY, endY), math.max(curX, endX), math.max(curY, endY))
+      Bounds(min(curX, endX), min(curY, endY), max(curX, endX), max(curY, endY))
     } else {
-      val x1Prime = math.cos(xAxisRotation)*(curX-endX)/2 + math.sin(xAxisRotation)*(curY-endY)/2
-      val y1Prime = -math.sin(xAxisRotation)*(curX-endX)/2 + math.cos(xAxisRotation)*(curY-endY)/2
+      val x1Prime = cos(phi)*(curX-endX)/2 + sin(phi)*(curY-endY)/2
+      val y1Prime = -sin(phi)*(curX-endX)/2 + cos(phi)*(curY-endY)/2
 
       val radicant: Double = (rX*rX*rY*rY - rX*rX*y1Prime*y1Prime - rY*rY*x1Prime*x1Prime)/
         (rX*rX*y1Prime*y1Prime +rY*rY*x1Prime*x1Prime)
@@ -153,36 +163,41 @@ object CurveUtils {
         val ratio = rX/rY
         val nRadicant = y1Prime*y1Prime + x1Prime*x1Prime/(ratio*ratio)
         if (nRadicant < 0.0) {
-          return Bounds(math.min(curX, endX), math.min(curY, endY), math.max(curX, endX), math.max(curY, endY))
+          return Bounds(min(curX, endX), min(curY, endY), max(curX, endX), max(curY, endY))
         }
-        rY=math.sqrt(nRadicant)
+        rY=sqrt(nRadicant)
         rX=ratio*rY
       } else {
-        val factor = (if (largeArcFlag == sweepFlag) -1.0 else 1)*math.sqrt(radicant)
+        val factor = (if (largeArcFlag == sweepFlag) -1.0 else 1)*sqrt(radicant)
         cXPrime = factor*rX*y1Prime/rY
         cYPrime = -factor*rY*x1Prime/rX
       }
 
-      val cX = cXPrime*math.cos(xAxisRotation) - cYPrime*math.sin(xAxisRotation) + (curX+endX)/2
-      val cY = cYPrime*math.sin(xAxisRotation) - cYPrime*math.cos(xAxisRotation) + (curY+endY)/2
+      val cX = cXPrime*cos(phi) - cYPrime*sin(phi) + (curX+endX)/2
+      val cY = cYPrime*sin(phi) - cYPrime*cos(phi) + (curY+endY)/2
       var (xMin: Double, xMax: Double, yMin: Double, yMax: Double) = (0.0, 0.0, 0.0, 0.0)
-      val (tXMin: Double, tXMax: Double, tYMin: Double, tYMax: Double) = if (xAxisRotation == 0 || xAxisRotation == math.Pi) {
+      val (tXMin: Double, tXMax: Double, tYMin: Double, tYMax: Double) = if (phi == 0 || phi == math.Pi) {
         xMin = cX - rX
         xMax = cX + rX
         yMin = cY - rY
         yMax = cY + rY
-        (getAngle(-rX, -0), getAngle(rx, 0), getAngle(0, -rY), getAngle(0, rY))
-      } else if(xAxisRotation == math.Pi/2 || xAxisRotation == 3*math.Pi/2) {
+        (getAngle(-rX, 0), getAngle(rX, 0), getAngle(0, -rY), getAngle(0, rY))
+      } else if(phi == math.Pi/2 || phi == 3*math.Pi/2) {
         xMin = cX - rY
         xMax = cX + rY
         yMin = cY - rX
         yMax = cY + rX
-        (getAngle(-rY, -0), getAngle(rY, 0), getAngle(0, -rX), getAngle(0, rX))
+        (getAngle(-rY, 0), getAngle(rY, 0), getAngle(0, -rX), getAngle(0, rX))
       } else {
-        var tXMinTemp = -math.atan(rY*math.tan(xAxisRotation)/rX)
-        var tXMaxTemp = math.Pi - math.atan(rY*math.tan(xAxisRotation)/rX)
-        xMin = cX + rX*math.cos(tXMinTemp)*math.cos(xAxisRotation) - rY*math.sin(tXMinTemp)*math.sin(xAxisRotation)
-        xMax = cX + rX*math.cos(tXMaxTemp)*math.cos(xAxisRotation) - rY*math.sin(tXMaxTemp)*math.sin(xAxisRotation)
+        var tXMinTemp = -atan(rY*tan(phi)/rX)
+        var tXMaxTemp = math.Pi - atan(rY*tan(phi)/rX)
+
+        if (tXMinTemp < 0) tXMinTemp += 2*math.Pi
+        if (tXMaxTemp < 0) tXMaxTemp += 2*math.Pi
+
+        xMax = cX + rX*cos(tXMinTemp)*cos(phi) - rY*sin(tXMinTemp)*sin(phi)
+        xMin = cX + rX*cos(tXMaxTemp)*cos(phi) - rY*sin(tXMaxTemp)*sin(phi)
+
         if (xMin > xMax) {
           val xMinHold = xMin
           xMin = xMax
@@ -194,15 +209,20 @@ object CurveUtils {
 
         }
 
-        var tmpY = cY + rX*math.cos(tXMinTemp)*math.sin(xAxisRotation) + rY*math.sin(tXMinTemp)*math.cos(xAxisRotation)
-        tXMinTemp = getAngle(xMin - cX, tmpY - cY)
-        tmpY = cY + rX*math.cos(tXMaxTemp)*math.sin(xAxisRotation) + rY*math.sin(tXMaxTemp)*math.cos(xAxisRotation)
-        tXMaxTemp = getAngle(xMax - cX, tmpY - cY)
+        //var tmpY = cY + rX*cos(tXMinTemp)*sin(phi) + rY*sin(tXMinTemp)*cos(phi)
+        //tXMinTemp = getAngle(xMin - cX, tmpY - cY)
+        //tmpY = cY + rX*cos(tXMaxTemp)*sin(phi) + rY*sin(tXMaxTemp)*cos(phi)
+        //tXMaxTemp = getAngle(xMax - cX, tmpY - cY)
 
-        var tYMinTemp = math.atan(rY/(math.tan(xAxisRotation)*rX))
-        var tYMaxTemp = math.atan(rY/(math.tan(xAxisRotation)*rx)) + math.Pi
-        yMin = cY + rX*math.cos(tYMinTemp)*math.sin(xAxisRotation) + rY*math.sin(tYMinTemp)*math.cos(xAxisRotation)
-        yMax = cY + rX*math.cos(tYMaxTemp)*math.sin(xAxisRotation) + rY*math.sin(tYMaxTemp)*math.cos(xAxisRotation)
+
+        var tYMinTemp = atan(rY/(tan(phi)*rX))
+        var tYMaxTemp = atan(rY/(tan(phi)*rX)) + math.Pi
+
+        if (tYMinTemp < 0) tYMinTemp += 2*math.Pi
+        if (tYMaxTemp < 0) tYMaxTemp += 2*math.Pi
+
+        yMax = cY + rX*cos(tYMinTemp)*sin(phi) + rY*sin(tYMinTemp)*cos(phi)
+        yMin = cY + rX*cos(tYMaxTemp)*sin(phi) + rY*sin(tYMaxTemp)*cos(phi)
 
         if (yMin > yMax) {
           val yMinHold = yMin
@@ -214,17 +234,19 @@ object CurveUtils {
           tYMaxTemp = tYMinHold
         }
 
-        var tmpX = cX + rX*math.cos(tYMinTemp)*math.cos(xAxisRotation) - rY*math.sin(tYMinTemp)*math.sin(xAxisRotation)
-        tYMinTemp = getAngle(tmpX-cX, yMin-cY)
-        tmpX = cX + rX*math.cos(tYMaxTemp)*math.cos(xAxisRotation) - rY*math.sin(tYMaxTemp)*math.sin(xAxisRotation)
-        tYMaxTemp = getAngle(tmpX-cX, yMin-cY)
+
+
+        //var tmpX = cX + rX*cos(tYMinTemp)*cos(phi) - rY*sin(tYMinTemp)*sin(phi)
+        //tYMinTemp = getAngle(tmpX-cX, yMin-cY)
+        //tmpX = cX + rX*cos(tYMaxTemp)*cos(phi) - rY*sin(tYMaxTemp)*sin(phi)
+        //tYMaxTemp = getAngle(tmpX-cX, yMin-cY)
         (tXMinTemp, tYMinTemp, tXMaxTemp, tYMaxTemp)
       }
 
       var angle1 = getAngle(curX - cX, curY - cY)
       var angle2 = getAngle(endX - cX, endY - cY)
 
-      if (sweepFlag != 1) {
+      if (sweepFlag == 1) {
         val angle1Hold = angle1
         angle1 = angle2
         angle2 = angle1Hold
@@ -238,23 +260,23 @@ object CurveUtils {
         otherArc = true
       }
 
-      if ((!otherArc && (angle1 > tXMin || angle2 < tXMin)) || (otherArc && !(angle1 > tXMin || angle2 < tXMin)))
-        xMin = min(curX, endX)
+      //if ((!otherArc && (angle1 > tXMin || angle2 < tXMin)) || (otherArc && !(angle1 > tXMin || angle2 < tXMin)))
+      //  xMin = min(curX, endX)
 
-      if ((!otherArc && (angle1 > tXMax || angle2 < tXMax)) || (otherArc && !(angle1 > tXMax || angle2 < tXMax)))
-        xMax = max(curX, endX)
+      //if ((!otherArc && (angle1 > tXMax || angle2 < tXMax)) || (otherArc && !(angle1 > tXMax || angle2 < tXMax)))
+      //  xMax = max(curX, endX)
 
-      if ((!otherArc && (angle1 > tYMin || angle2 < tYMin)) || (otherArc && !(angle1 > tYMin || angle2 < tYMin)))
-        yMin = min(curY, endY);
+      //if ((!otherArc && (angle1 > tYMin || angle2 < tYMin)) || (otherArc && !(angle1 > tYMin || angle2 < tYMin)))
+      //  yMin = min(curY, endY);
 
-      if ((!otherArc && (angle1 > tYMax || angle2 < tYMax)) || (otherArc && !(angle1 > tYMax || angle2 < tYMax)))
-        yMax = max(curY, endY)
+      //if ((!otherArc && (angle1 > tYMax || angle2 < tYMax)) || (otherArc && !(angle1 > tYMax || angle2 < tYMax)))
+      //  yMax = max(curY, endY)
 
-      Bounds(xMin, xMin, xMax, yMax)
+      //Bounds(xMin, yMin, xMax, yMax)
     }
   }
 
 
   def getAngle(bX: Double, bY: Double): Double =
-    (2*math.Pi + (if (bY > 0.0) 1 else -1) * math.acos(bX/math.sqrt(bX*bX+bY*bY))) % (2*math.Pi)
+  (2*math.Pi + (if (bY > 0.0) 1 else -1) * acos(bX/sqrt(bX*bX+bY*bY))) % (2*math.Pi)
 }
