@@ -272,7 +272,7 @@ object CurveUtils {
       //if ((!otherArc && (angle1 > tYMax || angle2 < tYMax)) || (otherArc && !(angle1 > tYMax || angle2 < tYMax)))
       //  yMax = max(curY, endY)
 
-      //Bounds(xMin, yMin, xMax, yMax)
+      Bounds(xMin, yMin, xMax, yMax)
     }
   }
 
