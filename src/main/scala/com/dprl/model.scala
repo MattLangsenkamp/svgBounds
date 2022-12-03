@@ -66,6 +66,9 @@ trait SvgType {
 case class Bounds(xMin: Double, yMin: Double, xMax: Double, yMax: Double) {
   def toRectTag: String = s"<rect x=\"$xMin\" y=\"$yMin\" width=\"${xMax-xMin}\" " +
     s"height=\"${yMax-yMin}\" fill=\"transparent\" stroke=\"black\"/>"
+
+  @targetName("plusEq")
+  def += (other: Bounds): Bounds = ???
 }
 
 case class Path(d: String) {

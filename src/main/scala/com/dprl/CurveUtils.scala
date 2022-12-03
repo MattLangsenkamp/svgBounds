@@ -253,7 +253,7 @@ object CurveUtils {
       }
 
       var otherArc = false
-      if(angle1 > angle2) {
+      if (angle1 > angle2) {
         val angle1Hold = angle1
         angle1 = angle2
         angle2 = angle1Hold
@@ -278,5 +278,5 @@ object CurveUtils {
 
 
   def getAngle(bX: Double, bY: Double): Double =
-  (2*math.Pi + (if (bY > 0.0) 1 else -1) * acos(bX/sqrt(bX*bX+bY*bY))) % (2*math.Pi)
+    (2*math.Pi + (if (bY > 0.0) 1 else -1) * acos(bX/sqrt(bX*bX+bY*bY))) % (2*math.Pi)
 }
