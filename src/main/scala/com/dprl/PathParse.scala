@@ -1,4 +1,5 @@
 package com.dprl
+
 import cats.data.NonEmptyList
 import cats.parse.{Parser, Parser0}
 import cats.parse.Parser.{char, charIn, string}
@@ -25,20 +26,21 @@ object PathParse {
   val coordinatePairSequence: Parser[NonEmptyList[(Float, Float)]] = (coordinatePair <* commaWsp.?).rep
   val coordinatePairDouble: Parser[((Float, Float), (Float, Float))] = (coordinatePair <* commaWsp) ~ coordinatePair
   val coordinatePairTriple: Parser[((Float, Float), (Float, Float), (Float, Float))] =
-    (((coordinatePair <* commaWsp) ~ coordinatePair <* commaWsp) ~ coordinatePair).map{
+    (((coordinatePair <* commaWsp) ~ coordinatePair <* commaWsp) ~ coordinatePair).map {
       case ((coord1, coord2), coord3) => (coord1, coord2, coord3)
     }
 
   // getting into actual stuff
   val ellipticalArcArgument: Parser[(Float, Float, Float, Short, Short, (Float, Float))] = ((number <* commaWsp)
-      ~ (number <* commaWsp)
-      ~ (number <* commaWsp)
-      ~ (flag <* commaWsp)
-      ~ (flag <* commaWsp)
-      ~ coordinatePair)
-      .map {
-        case (((((s1, s2), s3), c1), c2), (t1, t2)) =>
-          (s1.toFloat, s2.toFloat, s3.toFloat, c1.toShort, c2.toShort, (t1, t2))}
+    ~ (number <* commaWsp)
+    ~ (number <* commaWsp)
+    ~ (flag <* commaWsp)
+    ~ (flag <* commaWsp)
+    ~ coordinatePair)
+    .map {
+      case (((((s1, s2), s3), c1), c2), (t1, t2)) =>
+        (s1.toFloat, s2.toFloat, s3.toFloat, c1.toShort, c2.toShort, (t1, t2))
+    }
   val ellipticalArcArgumentSequence: Parser[NonEmptyList[(Float, Float, Float, Short, Short, (Float, Float))]] =
     (ellipticalArcArgument <* commaWsp.?).rep
 
@@ -59,12 +61,12 @@ object PathParse {
   // smooth quad
   val smoothQuadraticBezierCurvetoT: Parser[NonEmptyList[T]] =
     ((char('T') ~ wsp.rep0) *> coordinatePairSequence).map {
-      case tList: NonEmptyList[(Float, Float)] => tList.map((x:Float, y: Float) => T(x, y))
+      case tList: NonEmptyList[(Float, Float)] => tList.map((x: Float, y: Float) => T(x, y))
     }
 
   val smoothQuadraticBezierCurvetoT_ : Parser[NonEmptyList[t_]] =
     ((char('t') ~ wsp.rep0) *> coordinatePairSequence).map {
-      case tList: NonEmptyList[(Float, Float)] => tList.map((x:Float, y: Float) => t_(x, y))
+      case tList: NonEmptyList[(Float, Float)] => tList.map((x: Float, y: Float) => t_(x, y))
     }
 
   // reg quad
@@ -72,13 +74,13 @@ object PathParse {
     (coordinatePairDouble <* commaWsp.?).rep
 
   val quadraticBezierCurvetoQ: Parser[NonEmptyList[Q]] =
-    ((char('Q') ~ wsp.rep0) *> quadraticBezierCurveCoordinateSequence).map{
+    ((char('Q') ~ wsp.rep0) *> quadraticBezierCurveCoordinateSequence).map {
       case qList: NonEmptyList[((Float, Float), (Float, Float))] =>
         qList.map((controlPoint, finalPoint) => Q(controlPoint._1, controlPoint._2, finalPoint._1, finalPoint._2))
     };
 
   val quadraticBezierCurvetoQ_ : Parser[NonEmptyList[q_]] =
-    ((char('q') ~ wsp.rep0) *> quadraticBezierCurveCoordinateSequence).map{
+    ((char('q') ~ wsp.rep0) *> quadraticBezierCurveCoordinateSequence).map {
       case qList: NonEmptyList[((Float, Float), (Float, Float))] =>
         qList.map((controlPoint, finalPoint) => q_(controlPoint._1, controlPoint._2, finalPoint._1, finalPoint._2))
     };
@@ -88,13 +90,13 @@ object PathParse {
     (coordinatePairDouble <* commaWsp.?).rep
 
   val smoothCurvetoS: Parser[NonEmptyList[S]] =
-    ((char('S') ~ wsp.rep0) *> smoothCurvetoCoordinateSequence).map{
+    ((char('S') ~ wsp.rep0) *> smoothCurvetoCoordinateSequence).map {
       case sList: NonEmptyList[((Float, Float), (Float, Float))] =>
         sList.map((controlPoint, finalPoint) => S(controlPoint._1, controlPoint._2, finalPoint._1, finalPoint._2))
     };
 
   val smoothCurvetoS_ : Parser[NonEmptyList[s_]] =
-    ((char('s') ~ wsp.rep0) *> smoothCurvetoCoordinateSequence).map{
+    ((char('s') ~ wsp.rep0) *> smoothCurvetoCoordinateSequence).map {
       case sList: NonEmptyList[((Float, Float), (Float, Float))] =>
         sList.map((controlPoint, finalPoint) => s_(controlPoint._1, controlPoint._2, finalPoint._1, finalPoint._2))
     };
@@ -147,11 +149,11 @@ object PathParse {
 
   // moveto
   val movetoM: Parser[NonEmptyList[M]] = ((char('M') ~ wsp.rep0) *> coordinatePairSequence).map {
-    case mList: NonEmptyList[(Float, Float)] => mList.map((x: Float, y: Float) => M(x,y))
+    case mList: NonEmptyList[(Float, Float)] => mList.map((x: Float, y: Float) => M(x, y))
   }
 
   val movetoM_ : Parser[NonEmptyList[m_]] = ((char('m') ~ wsp.rep0) *> coordinatePairSequence).map {
-    case mList: NonEmptyList[(Float, Float)] => mList.map((x: Float, y: Float) => m_(x,y))
+    case mList: NonEmptyList[(Float, Float)] => mList.map((x: Float, y: Float) => m_(x, y))
   }
 
   val svgCommand: Parser[NonEmptyList[SvgCommand]] = Parser.oneOf(
@@ -182,20 +184,20 @@ object PathParse {
 
   val svgCommandRep: Parser0[NonEmptyList[SvgCommand]] = svgCommand.rep0.map {
     case ::(head, next) => next.foldLeft(head)((svgCommandList, n) => svgCommandList ::: n)
-    case Nil => NonEmptyList.of(m_(0,0))
+    case Nil => NonEmptyList.of(m_(0, 0))
   }
 
   val svgPath: Parser0[NonEmptyList[SvgCommand]] =
     ((wsp.rep0 *> mCombined.?) ~ (mCombined ~ svgCommandRep).?).map {
       case (
-        Some( l: NonEmptyList[com.dprl.SvgCommand]),
-        Some(ll: cats.data.NonEmptyList[com.dprl.SvgCommand], lll: cats.data.NonEmptyList[com.dprl.SvgCommand] ) ) => l ::: ll ::: lll
+        Some(l: NonEmptyList[com.dprl.SvgCommand]),
+        Some(ll: cats.data.NonEmptyList[com.dprl.SvgCommand], lll: cats.data.NonEmptyList[com.dprl.SvgCommand])) => l ::: ll ::: lll
       case (
         None,
-        Some(ll: cats.data.NonEmptyList[com.dprl.SvgCommand], lll: cats.data.NonEmptyList[com.dprl.SvgCommand] )) => ll ::: lll
+        Some(ll: cats.data.NonEmptyList[com.dprl.SvgCommand], lll: cats.data.NonEmptyList[com.dprl.SvgCommand])) => ll ::: lll
       case (
-        Some( l: NonEmptyList[com.dprl.SvgCommand]),
+        Some(l: NonEmptyList[com.dprl.SvgCommand]),
         None) => l
-      case _ => NonEmptyList(m_(0,0), List())
+      case _ => NonEmptyList(m_(0, 0), List())
     }
 }

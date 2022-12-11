@@ -64,16 +64,31 @@ trait SvgType {
 }
 
 case class Bounds(xMin: Double, yMin: Double, xMax: Double, yMax: Double) {
-  def toRectTag: String = s"<rect x=\"$xMin\" y=\"$yMin\" width=\"${xMax-xMin}\" " +
-    s"height=\"${yMax-yMin}\" fill=\"transparent\" stroke=\"black\"/>"
+  def toRectTag: String = s"<rect x=\"$xMin\" y=\"$yMin\" width=\"${xMax - xMin}\" " +
+    s"height=\"${yMax - yMin}\" fill=\"transparent\" stroke=\"black\"/>"
 
   @targetName("plusEq")
-  def += (other: Bounds): Bounds = ???
+  def +=(other: Bounds): Bounds = ???
 }
 
 case class Path(d: String) {
   @targetName("transform")
-  def * (m: Matrix): Path = ???
+  def *(m: Matrix): Path = ???
 }
 
 case class Rect()
+
+// transform model
+trait Transform
+
+case class Matrix(a: Double, b: Double, c: Double, d: Double, e: Double, f: Double) extends Transform
+
+case class Translate(x: Double, y: Option[Double]) extends Transform
+
+case class Scale(x: Double, y: Option[Double]) extends Transform
+
+case class Rotate(a: Double, p: Option[(Double, Double)]) extends Transform
+
+case class SkewX(a: Double) extends Transform
+
+case class SkewY(a: Double) extends Transform

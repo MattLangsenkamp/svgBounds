@@ -8,7 +8,7 @@ object SvgParse {
   def parse(root : Elem): List[bbox] =
     (root \ "svg").foldLeft(List[bbox]())((l, n) => {
       println(n.label)
-      val matrix = Matrix(1)
+      val matrix = Matrix(1,1,1,1,1,1)
       l ::: parseRecursive(n, matrix)
     })
 
