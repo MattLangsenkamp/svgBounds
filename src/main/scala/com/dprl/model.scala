@@ -1,5 +1,7 @@
 package com.dprl
 
+import cats.data.NonEmptyList
+
 import scala.math.{cos, max, min, sin, tan}
 import scala.annotation.targetName
 
@@ -11,9 +13,9 @@ trait SvgCommand
 case class EmptyCommand() extends SvgCommand
 
 // moveto commands
-case class M(x: Float, y: Float) extends SvgCommand // absolute
+case class M(p: Point) extends SvgCommand // absolute
 
-case class m_(x: Float, y: Float) extends SvgCommand // relative
+case class m_(p: Point) extends SvgCommand // relative
 
 // close path commands both do same thing
 case class Z() extends SvgCommand
@@ -21,41 +23,41 @@ case class Z() extends SvgCommand
 case class z_() extends SvgCommand
 
 // lineto commands
-case class L(x: Float, y: Float) extends SvgCommand // absolute
+case class L(p: Point) extends SvgCommand // absolute
 
-case class l_(x: Float, y: Float) extends SvgCommand // relative
+case class l_(p: Point) extends SvgCommand // relative
 
-case class H(x: Float) extends SvgCommand // absolute
+case class H(x: Double) extends SvgCommand // absolute
 
-case class h_(x: Float) extends SvgCommand // relative
+case class h_(x: Double) extends SvgCommand // relative
 
-case class V(y: Float) extends SvgCommand // absolute
+case class V(y: Double) extends SvgCommand // absolute
 
-case class v_(y: Float) extends SvgCommand // relative
+case class v_(y: Double) extends SvgCommand // relative
 
 // cubic bezier commands
-case class C(x1: Float, y1: Float, x2: Float, y2: Float, x: Float, y: Float) extends SvgCommand // absolute
+case class C(control1: Point, control2: Point, dest: Point) extends SvgCommand // absolute
 
-case class c_(x1: Float, y1: Float, x2: Float, y2: Float, x: Float, y: Float) extends SvgCommand // relative
+case class c_(control1: Point, control2: Point, dest: Point) extends SvgCommand // relative
 
-case class S(x2: Float, y2: Float, x: Float, y: Float) extends SvgCommand // absolute
+case class S(control2: Point, dest: Point) extends SvgCommand // absolute
 
-case class s_(x2: Float, y2: Float, x: Float, y: Float) extends SvgCommand // relative
+case class s_(control2: Point, dest: Point) extends SvgCommand // relative
 
 // quadratic bezier curve commands
-case class Q(x1: Float, y1: Float, x: Float, y: Float) extends SvgCommand // absolute
+case class Q(control1: Point, dest: Point) extends SvgCommand // absolute
 
-case class q_(x1: Float, y1: Float, x: Float, y: Float) extends SvgCommand // relative
+case class q_(control1: Point, dest: Point) extends SvgCommand // relative
 
-case class T(x: Float, y: Float) extends SvgCommand // absolute
+case class T(p: Point) extends SvgCommand // absolute
 
-case class t_(x: Float, y: Float) extends SvgCommand // relative
+case class t_(p: Point) extends SvgCommand // relative
 
 // elliptical arc
-case class A(rx: Float, ry: Float, xAxisRotation: Float, largeArcFlag: Short, sweepFlag: Short, x: Float, y: Float)
+case class A(rx: Float, ry: Float, xAxisRotation: Float, largeArcFlag: Short, sweepFlag: Short, dest: Point)
   extends SvgCommand
 
-case class a_(rx: Float, ry: Float, xAxisRotation: Float, largeArcFlag: Short, sweepFlag: Short, x: Float, y: Float)
+case class a_(rx: Float, ry: Float, xAxisRotation: Float, largeArcFlag: Short, sweepFlag: Short, dest: Point)
   extends SvgCommand
 
 // ------------ non inter-path model ------------
@@ -73,7 +75,9 @@ case class Bounds(xMin: Double, yMin: Double, xMax: Double, yMax: Double) {
     Bounds(min(this.xMin, other.xMin), min(this.yMin, other.yMin), max(this.xMax, other.xMax), max(this.yMax, other.yMax))
 }
 
-case class Path(d: String) {
+case class Point(x: Double, y: Double)
+
+case class Path(d: NonEmptyList[SvgCommand]) {
   @targetName("transform")
   def *(m: Matrix): Path = ???
 }

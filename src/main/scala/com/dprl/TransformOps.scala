@@ -10,4 +10,7 @@ object TransformOps {
       (curMatrix, transform) => transform.toMatrix * curMatrix
     )
 
+  trait Transformation[A <: SvgCommand]{
+    def transform(matrix: Matrix, svgCommand: A): A
+  }
 }
