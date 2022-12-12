@@ -79,16 +79,39 @@ case class Path(d: String) {
 case class Rect()
 
 // transform model
-trait Transform
+trait Transform {
+  def toMatrix: Matrix
+}
 
-case class Matrix(a: Double, b: Double, c: Double, d: Double, e: Double, f: Double) extends Transform
+case class Matrix(a: Double, b: Double, c: Double, d: Double, e: Double, f: Double) extends Transform {
+  override def toMatrix: Matrix = this
+  
+  @targetName("matMul")
+  def *(other: Matrix): Matrix = Matrix(
+    other.a * this.a + other.b * this.c, 0,
+    other.c*this.a+other.d+other.b, 0,
+    other.e*this.a+other.f*this.c+this.e, 0)
 
-case class Translate(x: Double, y: Option[Double]) extends Transform
+  @targetName("matMul")
+  def *(p: (Double, Double)): (Double, Double) = ???
+}
 
-case class Scale(x: Double, y: Option[Double]) extends Transform
+case class Translate(x: Double, y: Option[Double]) extends Transform {
+  override def toMatrix: Matrix = ???
+}
 
-case class Rotate(a: Double, p: Option[(Double, Double)]) extends Transform
+case class Scale(x: Double, y: Option[Double]) extends Transform {
+  override def toMatrix: Matrix = ???
+}
 
-case class SkewX(a: Double) extends Transform
+case class Rotate(a: Double, p: Option[(Double, Double)]) extends Transform {
+  override def toMatrix: Matrix = ???
+}
 
-case class SkewY(a: Double) extends Transform
+case class SkewX(a: Double) extends Transform {
+  override def toMatrix: Matrix = ???
+}
+
+case class SkewY(a: Double) extends Transform {
+  override def toMatrix: Matrix = ???
+}

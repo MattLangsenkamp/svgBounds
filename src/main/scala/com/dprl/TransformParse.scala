@@ -14,16 +14,16 @@ object TransformParse {
   val number: Parser[Double] = PathParse.number.map(_.toDouble)
 
   val translate: Parser[Translate] = ((string("translate") ~ wsp.rep0 ~ leftParenthesis ~ wsp.rep0)
-    *> number ~ (commaWsp *> number).? <* (wsp.rep0 ~ rightParenthesis))
+    *> number ~ (commaWsp *> number).backtrack.? <* (wsp.rep0 <* rightParenthesis))
     .map((x: Double, y: Option[Double]) => Translate(x, y))
 
   val scale: Parser[Scale] = ((string("scale") ~ wsp.rep0 ~ leftParenthesis ~ wsp.rep0)
-    *> number ~ (commaWsp *> number).? <* (wsp.rep0 ~ rightParenthesis))
+    *> number ~ (commaWsp *> number).backtrack.? <* (wsp.rep0 ~ rightParenthesis))
     .map((x: Double, y: Option[Double]) => Scale(x, y))
 
   val rotate: Parser[Rotate] =
     ((string("rotate") ~ wsp.rep0 ~ leftParenthesis ~ wsp.rep0)
-      *> number ~ (commaWsp *> number ~ (commaWsp *> number)).?
+      *> number ~ (commaWsp *> number ~ (commaWsp *> number)).backtrack.?
       <* (wsp.rep0 ~ rightParenthesis)).map((a: Double, xY: Option[(Double, Double)]) => Rotate(a, xY))
 
   val skewX: Parser[SkewX] = ((string("skewX") ~ wsp.rep0 ~ leftParenthesis ~ wsp.rep0)
