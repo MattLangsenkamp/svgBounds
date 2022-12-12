@@ -1,5 +1,6 @@
 package com.dprl
 
+import scala.math.{cos, sin, tan}
 import scala.annotation.targetName
 
 // ------------ model for components that make up a path ------------
@@ -85,33 +86,44 @@ trait Transform {
 
 case class Matrix(a: Double, b: Double, c: Double, d: Double, e: Double, f: Double) extends Transform {
   override def toMatrix: Matrix = this
-  
-  @targetName("matMul")
-  def *(other: Matrix): Matrix = Matrix(
-    other.a * this.a + other.b * this.c, 0,
-    other.c*this.a+other.d+other.b, 0,
-    other.e*this.a+other.f*this.c+this.e, 0)
 
   @targetName("matMul")
-  def *(p: (Double, Double)): (Double, Double) = ???
+  def *(other: Matrix): Matrix = Matrix(
+    this.a * other.a + this.c * other.b,          this.b * other.a + this.d * other.b,
+    this.a * other.c + this.c + other.d,          this.b * other.c + this.d * other.d,
+    this.a * other.e + this.c * other.f + this.e, this.b * other.e + this.d * other.f + this.f)
+
+  @targetName("matMul")
+  def *(p: (Double, Double)): (Double, Double) =
+    (this.a * p._1 + this.c * p._2 + this.e, this.b * p._1 + this.d * p._2 + + this.f)
 }
 
 case class Translate(x: Double, y: Option[Double]) extends Transform {
-  override def toMatrix: Matrix = ???
+  override def toMatrix: Matrix = y match
+    case Some(yReal) => Matrix(1, 0, 0, 1, x, yReal)
+    case None => Matrix(1, 0, 0, 1, x, 0)
 }
 
 case class Scale(x: Double, y: Option[Double]) extends Transform {
-  override def toMatrix: Matrix = ???
+  override def toMatrix: Matrix = y match
+    case Some(yReal) => Matrix(x, 0, 0, yReal, 0, 0)
+    case None => Matrix(x, 0, 0, 1, 0, 0)
 }
 
 case class Rotate(a: Double, p: Option[(Double, Double)]) extends Transform {
-  override def toMatrix: Matrix = ???
+  override def toMatrix: Matrix =
+    val radians = a.toRadians
+    Matrix(cos(radians), sin(radians), -sin(radians), cos(radians), 0, 0)
 }
 
 case class SkewX(a: Double) extends Transform {
-  override def toMatrix: Matrix = ???
+  override def toMatrix: Matrix =
+    val radians = a.toRadians
+    Matrix(1, 0, tan(radians), 1, 0, 0)
 }
 
 case class SkewY(a: Double) extends Transform {
-  override def toMatrix: Matrix = ???
+  override def toMatrix: Matrix =
+    val radians = a.toRadians
+    Matrix(1, tan(radians), 0, 1, 0, 0)
 }
