@@ -1,6 +1,6 @@
 package com.dprl
 
-import scala.math.{cos, sin, tan}
+import scala.math.{cos, max, min, sin, tan}
 import scala.annotation.targetName
 
 // ------------ model for components that make up a path ------------
@@ -69,7 +69,8 @@ case class Bounds(xMin: Double, yMin: Double, xMax: Double, yMax: Double) {
     s"height=\"${yMax - yMin}\" fill=\"transparent\" stroke=\"black\"/>"
 
   @targetName("plusEq")
-  def +=(other: Bounds): Bounds = ???
+  def +=(other: Bounds): Bounds =
+    Bounds(min(this.xMin, other.xMin), min(this.yMin, other.yMin), max(this.xMax, other.xMax), max(this.yMax, other.yMax))
 }
 
 case class Path(d: String) {
