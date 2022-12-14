@@ -1,5 +1,6 @@
 package com.dprl
-
+import com.dprl.model.SvgCommand.*
+import com.dprl.model.SvgType.Point
 import cats.data.NonEmptyList
 import cats.parse.{Parser, Parser0}
 import cats.parse.Parser.{char, charIn, string}
@@ -190,13 +191,13 @@ object PathParse {
   val svgPath: Parser0[NonEmptyList[SvgCommand]] =
     ((wsp.rep0 *> mCombined.?) ~ (mCombined ~ svgCommandRep).?).map {
       case (
-        Some(l: NonEmptyList[com.dprl.SvgCommand]),
-        Some(ll: cats.data.NonEmptyList[com.dprl.SvgCommand], lll: cats.data.NonEmptyList[com.dprl.SvgCommand])) => l ::: ll ::: lll
+        Some(l: NonEmptyList[SvgCommand]),
+        Some(ll: cats.data.NonEmptyList[SvgCommand], lll: cats.data.NonEmptyList[SvgCommand])) => l ::: ll ::: lll
       case (
         None,
-        Some(ll: cats.data.NonEmptyList[com.dprl.SvgCommand], lll: cats.data.NonEmptyList[com.dprl.SvgCommand])) => ll ::: lll
+        Some(ll: cats.data.NonEmptyList[SvgCommand], lll: cats.data.NonEmptyList[SvgCommand])) => ll ::: lll
       case (
-        Some(l: NonEmptyList[com.dprl.SvgCommand]),
+        Some(l: NonEmptyList[SvgCommand]),
         None) => l
       case _ => NonEmptyList(m_(Point(0, 0)), List())
     }

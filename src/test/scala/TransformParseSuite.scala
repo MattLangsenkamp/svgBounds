@@ -1,9 +1,10 @@
 import cats.data.NonEmptyList
+import com.dprl.model.Transformation.*
 import com.dprl.*
 import cats.parse.{Parser, Parser0}
 
 class TransformParseSuite extends munit.FunSuite {
-  def testTransform[A <: Transform](path: String, outCommand: A, parser: Parser[A])(implicit loc: munit.Location): Unit = {
+  def testTransform[A <: Transformation](path: String, outCommand: A, parser: Parser[A])(implicit loc: munit.Location): Unit = {
     test("transform") {
       parser.parse(path) match
         case Right((_, res)) =>
@@ -13,7 +14,7 @@ class TransformParseSuite extends munit.FunSuite {
     }
   }
 
-  def testTransformList[A <: Transform](path: String, outCommand: NonEmptyList[A], parser: Parser[NonEmptyList[A]])(implicit loc: munit.Location): Unit = {
+  def testTransformList[A <: Transformation](path: String, outCommand: NonEmptyList[A], parser: Parser[NonEmptyList[A]])(implicit loc: munit.Location): Unit = {
     test("transform") {
       parser.parse(path) match
         case Right((_, res)) =>

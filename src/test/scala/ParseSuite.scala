@@ -1,7 +1,8 @@
 import cats.data.NonEmptyList
 import com.dprl.*
+import com.dprl.model.SvgType.Point
 import cats.parse.{Parser, Parser0}
-
+import com.dprl.model.SvgCommand.*
 class ParseSuite extends munit.FunSuite {
 
   def testCommand[A <: SvgCommand](path: String, outCommand: NonEmptyList[A], parser: Parser[NonEmptyList[A]])(implicit loc: munit.Location): Unit = {

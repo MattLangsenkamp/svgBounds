@@ -1,4 +1,5 @@
 package com.dprl
+import com.dprl.model.Transformation.Matrix
 import scala.xml.{Elem, Node}
 
 object SvgParse {

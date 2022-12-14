@@ -1,5 +1,8 @@
 import cats.data.NonEmptyList
+import com.dprl.model.SvgCommand.*
 import com.dprl.*
+import com.dprl.model.SvgType.Point
+
 import cats.parse.{Parser, Parser0}
 
 class CurveSuite extends munit.FunSuite {

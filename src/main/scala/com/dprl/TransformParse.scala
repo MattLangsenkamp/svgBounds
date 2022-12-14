@@ -1,5 +1,5 @@
 package com.dprl
-
+import com.dprl.model.Transformation.*
 import cats.data.NonEmptyList
 import cats.parse.{Parser, Parser0}
 import cats.parse.Parser.{char, charIn, string}
@@ -44,7 +44,7 @@ object TransformParse {
     .map {
       case (((((a: Double, b: Double), c: Double), d: Double), e: Double), f: Double) => Matrix(a, b, c, d, e, f)
     }
-  val transform: Parser[Transform] = Parser.oneOf(List(
+  val transform: Parser[Transformation] = Parser.oneOf(List(
     translate,
     scale,
     rotate,
@@ -52,6 +52,6 @@ object TransformParse {
     skewY,
     matrix
   ))
-  val transforms: Parser[NonEmptyList[Transform]] = (transform <* commaWsp.rep0).rep
-  val transformList: Parser[NonEmptyList[Transform]] = (wsp.rep *> transforms <* wsp.rep0) | (transforms <* wsp.rep0)
+  val transforms: Parser[NonEmptyList[Transformation]] = (transform <* commaWsp.rep0).rep
+  val transformList: Parser[NonEmptyList[Transformation]] = (wsp.rep *> transforms <* wsp.rep0) | (transforms <* wsp.rep0)
 }
