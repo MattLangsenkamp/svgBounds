@@ -1,13 +1,21 @@
 package com.dprl
-import scala.math.{max, min, pow, sqrt, sin, cos, tan, atan, acos}
+import com.dprl.model.SvgType.{Bounds, Point}
+import sun.rmi.transport.Endpoint
+
+import scala.math.{acos, atan, cos, max, min, pow, sin, sqrt, tan}
 
 object CurveUtils {
 
   // solution adapted from https://github.com/meerk40t/svgelements/blob/master/svgelements/svgelements.py
-  def quadraticBezierBoundingBox(sPointX: Double, sPointY: Double,
-                                 cPointX: Double, cPointY: Double,
-                                 endPointX: Double, endPointY: Double): Bounds = {
-
+  def quadraticBezierBoundingBox(startPoint: Point,
+                                 controlPoint: Point,
+                                 endPoint: Point): Bounds = {
+    val sPointX = startPoint.x
+    val sPointY = startPoint.y
+    val cPointX = controlPoint.x
+    val cPointY = controlPoint.y
+    val endPointX = endPoint.x
+    val endPointY = endPoint.y
     def pointX(t: Double) = (pow(1-t, 2)*sPointX) + (2*(1-t)*t*cPointX) + pow(t,2)*endPointX
     def pointY(t: Double) = (pow(1-t, 2)*sPointY) + (2*(1-t)*t*cPointY) + pow(t,2)*endPointY
     val nX = sPointX-cPointX
@@ -36,10 +44,20 @@ object CurveUtils {
   }
 
   // solution adapted from https://eliot-jones.com/2019/12/cubic-bezier-curve-bounding-boxes
-  def cubicBezierBoundingBox(sPointX: Double, sPointY: Double,
-                             cPoint1X: Double, cPoint1Y: Double,
-                             cPoint2X: Double, cPoint2Y: Double,
-                             endPointX: Double, endPointY: Double): Bounds = {
+  def cubicBezierBoundingBox(startPoint: Point,
+                             controlPoint1: Point,
+                             controlPoint2: Point,
+                             endPoint: Point): Bounds = {
+
+    val sPointX = startPoint.x
+    val sPointY = startPoint.y
+    val cPoint1X = controlPoint1.x
+    val cPoint1Y = controlPoint1.y
+    val cPoint2X = controlPoint2.x
+    val cPoint2Y = controlPoint2.y
+    val endPointX = endPoint.x
+    val endPointY = endPoint.y
+
     val (solX1, solX2) = solveQuadratic(sPointX, cPoint1X, cPoint2X, endPointX)
     val (solY1, solY2) = solveQuadratic(sPointY, cPoint1Y, cPoint2Y, endPointY)
 
@@ -139,12 +157,17 @@ object CurveUtils {
 
   // solution adapted from http://fridrich.blogspot.com/2011/06/bounding-box-of-svg-elliptical-arc.html
   def ellipticalArcBoundingBox(
-                                curX: Double, curY:Double,
+                                startPoint: Point,
                                 rx: Double, ry: Double,
                                 xAxisRotation: Double,
                                 largeArcFlag: Short,
                                 sweepFlag: Short,
-                                endX: Double, endY: Double): Bounds = {
+                                endPoint: Point): Bounds = {
+
+    val curX = startPoint.x
+    val curY = startPoint.y
+    val endX = endPoint.x
+    val endY = endPoint.y
     var rX = if(rx < 0.0) -rx else rx
     var rY = if(ry < 0.0) -ry else ry
     val phi = xAxisRotation.toRadians
