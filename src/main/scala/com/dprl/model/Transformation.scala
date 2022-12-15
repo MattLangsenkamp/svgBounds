@@ -16,7 +16,7 @@ object Transformation {
     @targetName("matMul")
     def *(other: Matrix): Matrix = Matrix(
       this.a * other.a + this.c * other.b,          this.b * other.a + this.d * other.b,
-      this.a * other.c + this.c + other.d,          this.b * other.c + this.d * other.d,
+      this.a * other.c + this.c * other.d,          this.b * other.c + this.d * other.d,
       this.a * other.e + this.c * other.f + this.e, this.b * other.e + this.d * other.f + this.f)
 
     @targetName("matMul")

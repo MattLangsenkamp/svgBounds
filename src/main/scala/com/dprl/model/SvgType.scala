@@ -38,9 +38,11 @@ object SvgType {
   }
 
   case class Point(x: Double, y: Double) {
-    
+
     @targetName("plus")
     def +(other: Point): Point = Point(x+other.x, y+other.y)
+
+    def projectOver(other: Point): Point = ???
   }
 
 }
