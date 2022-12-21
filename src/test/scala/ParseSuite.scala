@@ -264,5 +264,14 @@ class ParseSuite extends munit.FunSuite {
     ("M 1, 2 V 1 V 2E2", NonEmptyList(M(Point(1,2)), List(V(1),V(200) ))),
     ("M 1, 2 1, 2 V 1 V 2E2", NonEmptyList(M(Point(1,2)), List(M(Point(1,2)),V(1),V(200) ))),
     ("M 1, 2 1, 2 V 1 V 2E2 m 22 33", NonEmptyList(M(Point(1,2)), List(M(Point(1,2)),V(1),V(200), m_(Point(22,33))))),
+    ("M231 637Q204 637 199 638", NonEmptyList(M(Point(231,637)), List(Q(Point(204,637), Point(199, 638)))))
   ).foreach(testCommand0(_, _, PathParse.svgCommandRep))
+
+  List(
+    ("M 1, 2 V 1", NonEmptyList(M(Point(1, 2)), List(V(1)))),
+    ("M 1, 2 V 1 V 2E2", NonEmptyList(M(Point(1, 2)), List(V(1), V(200)))),
+    ("M 1, 2 1, 2 V 1 V 2E2", NonEmptyList(M(Point(1, 2)), List(M(Point(1, 2)), V(1), V(200)))),
+    ("M 1, 2 1, 2 V 1 V 2E2 m 22 33", NonEmptyList(M(Point(1, 2)), List(M(Point(1, 2)), V(1), V(200), m_(Point(22, 33))))),
+    ("M231 637Q204 637 199 638", NonEmptyList(M(Point(231, 637)), List(Q(Point(204, 637), Point(199, 638)))))
+  ).foreach(testCommand0(_, _, PathParse.svgPath))
 }

@@ -4,21 +4,19 @@ import cats.data.NonEmptyList
 import cats.parse.Parser
 import com.dprl.model.SvgCommand.*
 import com.dprl.model.Transformation.*
-import com.dprl.model.SvgType.{Point, Path, Bounds}
+import com.dprl.model.SvgType.{Bounds, Path, Point}
 import com.dprl.CurveUtils.*
-import scala.annotation.targetName
 
-object PathOps {
+import scala.annotation.targetName
+import scala.xml.Elem
+
+object BoundOps {
 
   def CollapseTransforms(transformList: NonEmptyList[Transformation]): Matrix =
   // initialize with identity matrix?
     transformList.foldLeft(Matrix(1, 0, 0, 1, 0, 0))(
       (curMatrix, transform) => transform.toMatrix * curMatrix
     )
-
-  def parsePath(pathString: String): Either[Parser.Error, Path] = PathParse.svgPath.parse(pathString) match
-    case Left(value) => Left(value)
-    case Right(value) => Right(Path(value._2))
 
   def getBounds(path: Path): Bounds = path.d.foldLeft[(Point, SvgCommand, Bounds)](
     (

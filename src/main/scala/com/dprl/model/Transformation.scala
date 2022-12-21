@@ -34,13 +34,17 @@ object Transformation {
   case class Scale(x: Double, y: Option[Double]) extends Transformation {
     override def toMatrix: Matrix = y match
       case Some(yReal) => Matrix(x, 0, 0, yReal, 0, 0)
-      case None => Matrix(x, 0, 0, 1, 0, 0)
+      case None => Matrix(x, 0, 0, x, 0, 0)
   }
 
   case class Rotate(a: Double, p: Option[(Double, Double)]) extends Transformation {
     override def toMatrix: Matrix =
       val radians = a.toRadians
-      Matrix(cos(radians), sin(radians), -sin(radians), cos(radians), 0, 0)
+      val rotMat = Matrix(cos(radians), sin(radians), -sin(radians), cos(radians), 0, 0)
+      p match
+        case Some((x, y)) =>
+          Translate(x,Some(y)).toMatrix * rotMat * Translate(-x, Some(-y)).toMatrix
+        case None => rotMat
   }
 
   case class SkewX(a: Double) extends Transformation {

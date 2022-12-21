@@ -1,42 +1,30 @@
 package com.dprl
 import cats.data.NonEmptyList
-import org.jsoup.Jsoup
+import com.dprl.SvgParse.defaultParse
 
-import scala.xml.{XML, Node}
+import scala.io.Source
+import scala.xml.{Node, XML}
 object Main {
 
   def main(args: Array[String]): Unit = {
-    val lolz =
-      """<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 112 90">
-        |<circle ten="11">
-        | <fake/>
-        |</circle>
-        |<circle ten="11">
-        | <stake/>
-        |</circle>
-        | <bob>
-        |   <bob>
-        |   </bob>
-        | </bob>
-        | <bob>
-        | </bob>
-        | <bob>
-        | </bob>
-        |</svg>
-        |""".stripMargin
+    val t = "x+y+z"
+    val fileContents = Source.fromResource(s"svg/$t.svg").getLines.mkString
+    val ok =  time {
+      val fileContents = Source.fromResource(s"svg/$t.svg").getLines.mkString
+      defaultParse(fileContents)}("parse")
+    println(ok)
+    val justBBoxes = ok._1.map((b, _) => b)
+    val root = XML.loadString(fileContents)
+    XML.save(s"test$t.svg", Visualize.addBoundingBoxes(root, justBBoxes))
 
-    val hmm = XML.loadString(lolz)
-    val circleChild = (hmm \ "circle").head
-    (hmm \ "circle").foreach((n: Node)  => {
-      val stakeOrFake = n \ "fake"
-      println(stakeOrFake)
-    })
-    val ten = circleChild.attribute("ten")
-    println(ten.get.head.mkString)
-    println(circleChild.attributes.asAttrMap("ten"))
-    val fake = circleChild \ "fake"
-    println(fake)
+  }
 
+  def time[R](block: => R)(message: String): R = {
+    val t0 = System.nanoTime()
+    val result = block // call-by-name
+    val t1 = System.nanoTime()
+    println(s"Elapsed time to complete $message: " + (t1 - t0)/1e9 + "s")
+    result
   }
 
 }

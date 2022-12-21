@@ -1,4 +1,5 @@
 package com.dprl
+
 import com.dprl.model.SvgCommand.*
 import com.dprl.model.SvgType.Point
 import cats.data.NonEmptyList
@@ -22,7 +23,7 @@ object PathParse {
   val exponent: Parser[String] = (charIn("eE") ~ sign.? ~ digit.rep0).string
   val number: Parser[String] = (fractionConstant ~ exponent.?).string
   val coordinate: Parser[Double] = (sign ~ number).string.backtrack.map(_.toDouble) | number.map(_.toDouble)
-  val coordinatePair: Parser[Point] = ((coordinate <* commaWsp) ~ coordinate).map((x,y) => Point(x,y))
+  val coordinatePair: Parser[Point] = ((coordinate <* commaWsp) ~ coordinate).map((x, y) => Point(x, y))
   val coordinateSequence: Parser[NonEmptyList[Double]] = (coordinate <* commaWsp.?).rep
   val coordinatePairSequence: Parser[NonEmptyList[Point]] = (coordinatePair <* commaWsp.?).rep
   val coordinatePairDouble: Parser[(Point, Point)] = (coordinatePair <* commaWsp) ~ coordinatePair
@@ -188,17 +189,9 @@ object PathParse {
     case Nil => NonEmptyList.of(m_(Point(0, 0)))
   }
 
-  val svgPath: Parser0[NonEmptyList[SvgCommand]] =
-    ((wsp.rep0 *> mCombined.?) ~ (mCombined ~ svgCommandRep).?).map {
-      case (
-        Some(l: NonEmptyList[SvgCommand]),
-        Some(ll: cats.data.NonEmptyList[SvgCommand], lll: cats.data.NonEmptyList[SvgCommand])) => l ::: ll ::: lll
-      case (
-        None,
-        Some(ll: cats.data.NonEmptyList[SvgCommand], lll: cats.data.NonEmptyList[SvgCommand])) => ll ::: lll
-      case (
-        Some(l: NonEmptyList[SvgCommand]),
-        None) => l
-      case _ => NonEmptyList(m_(Point(0, 0)), List())
-    }
+  private val svgPathNoLeadingSpace: Parser[NonEmptyList[SvgCommand]] = (mCombined ~ svgCommandRep).map((l1, l2) => l1 ::: l2)
+
+  private val svgPathLeadingSpace: Parser[NonEmptyList[SvgCommand]] = (wsp.rep *> mCombined ~ svgCommandRep).map((l1, l2) => l1 ::: l2)
+
+  val svgPath: Parser[NonEmptyList[SvgCommand]] = svgPathLeadingSpace.backtrack | svgPathNoLeadingSpace
 }
