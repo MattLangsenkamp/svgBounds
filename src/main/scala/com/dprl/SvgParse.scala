@@ -2,7 +2,7 @@ package com.dprl
 import cats.kernel.Monoid
 import cats.parse.Parser
 import com.dprl.model.Transformation.Matrix
-
+import com.dprl.Main.time
 import scala.xml.{Elem, Node, XML}
 import com.dprl.model.SvgType.{Bounds, Path, Rect, newBounds}
 
@@ -48,28 +48,31 @@ object SvgParse {
   }
 
   private def potentiallyTransformMatrix(node: Node, matrix: Matrix): Matrix = {
-    node.attributes.asAttrMap.get("transform") match
-      case Some(transform) => TransformParse.transformList.parse(transform) match
+
+      node.attributes.asAttrMap.get("transform") match
+        case Some(transform) => time {TransformParse.transformList.parse(transform)} ("matrix trans") match
           case Left(_) =>
             println("failed to parse transform matrix")
             matrix
           case Right(value) =>
             matrix * BoundOps.CollapseTransforms(value._2)
-      case None => matrix
+        case None => matrix
   }
 
   def parsePath(path: Node, matrix: Matrix): Bounds =
-    PathParse.svgPath.parse(path.attributes.asAttrMap("d")) match
-      case Left(_) =>
-        println("error parsing path")
-        assert(false)
-      case Right(value) =>
-        BoundOps.getBounds(Path(value._2) * matrix)
+
+    time {
+      PathParse.svgPath.parse(path.attributes.asAttrMap("d"))} ("pathParse") match
+        case Left(_) =>
+          println("error parsing path")
+          assert(false)
+        case Right(value) =>
+          time {BoundOps.getBounds(Path(value._2) * matrix)} ("getBounds")
+
 
   def parseRect(node: Node, matrix: Matrix): Bounds =
     val m = node.attributes.asAttrMap
     val rect = Rect(m("x").toDouble, m("y").toDouble, m("width").toDouble, m("height").toDouble)
     val nRect = rect * matrix
     Bounds(nRect.x, nRect.y, nRect.x + nRect.width, nRect.y + nRect.height)
-
 }

@@ -17,12 +17,12 @@ object PathParse {
   val digit: Parser[Char] = charIn("0123456789")
   val wsp: Parser[Char] = charIn("\t \n\f\r")
   val comma: Parser[Unit] = char(44)
-  val commaWsp: Parser[String] = (wsp.rep ~ comma.? ~ wsp.rep0).string.backtrack | (comma ~ wsp.rep0).string
-  val fractionConstant: Parser[String] = (digit.rep ~ decimal ~ digit.rep).string.backtrack | (decimal ~ digit.rep).string.backtrack | string(digit.rep)
+  val commaWsp: Parser[String] = (wsp.rep ~ comma.? ~ wsp.rep0).string | (comma ~ wsp.rep0).string
+  val fractionConstant: Parser[String] = (digit.rep ~ decimal ~ digit.rep).string.backtrack | (decimal ~ digit.rep).string | string(digit.rep)
   val sign: Parser[Char] = charIn("+-")
   val exponent: Parser[String] = (charIn("eE") ~ sign.? ~ digit.rep0).string
   val number: Parser[String] = (fractionConstant ~ exponent.?).string
-  val coordinate: Parser[Double] = (sign ~ number).string.backtrack.map(_.toDouble) | number.map(_.toDouble)
+  val coordinate: Parser[Double] = ((sign ~ number).string | number).map(_.toDouble)
   val coordinatePair: Parser[Point] = ((coordinate <* commaWsp) ~ coordinate).map((x, y) => Point(x, y))
   val coordinateSequence: Parser[NonEmptyList[Double]] = (coordinate <* commaWsp.?).rep
   val coordinatePairSequence: Parser[NonEmptyList[Point]] = (coordinatePair <* commaWsp.?).rep
@@ -193,5 +193,5 @@ object PathParse {
 
   private val svgPathLeadingSpace: Parser[NonEmptyList[SvgCommand]] = (wsp.rep *> mCombined ~ svgCommandRep).map((l1, l2) => l1 ::: l2)
 
-  val svgPath: Parser[NonEmptyList[SvgCommand]] = svgPathLeadingSpace.backtrack | svgPathNoLeadingSpace
+  val svgPath: Parser[NonEmptyList[SvgCommand]] = svgPathLeadingSpace | svgPathNoLeadingSpace
 }

@@ -12,19 +12,30 @@ object Main {
     val ok =  time {
       val fileContents = Source.fromResource(s"svg/$t.svg").getLines.mkString
       defaultParse(fileContents)}("parse")
-    println(ok)
+    val ok2 = time {
+      val fileContents = Source.fromResource(s"svg/$t.svg").getLines.mkString
+      defaultParse(fileContents)
+    }("parse")
+    val ok3 = time {
+      val fileContents = Source.fromResource(s"svg/$t.svg").getLines.mkString
+      defaultParse(fileContents)
+    }("parse")
+    val ok4 = time {
+      val fileContents = Source.fromResource(s"svg/$t.svg").getLines.mkString
+      defaultParse(fileContents)
+    }("parse")
     val justBBoxes = ok._1.map((b, _) => b)
+    println(justBBoxes.length)
     val root = XML.loadString(fileContents)
     XML.save(s"test$t.svg", Visualize.addBoundingBoxes(root, justBBoxes))
-
   }
 
   def time[R](block: => R)(message: String): R = {
     val t0 = System.nanoTime()
     val result = block // call-by-name
     val t1 = System.nanoTime()
-    println(s"Elapsed time to complete $message: " + (t1 - t0)/1e9 + "s")
+    val t = (t1 - t0)/1e9
+    if (t>0.0001) println(s"Elapsed time to complete $message: " + t + "s")
     result
   }
-
 }
