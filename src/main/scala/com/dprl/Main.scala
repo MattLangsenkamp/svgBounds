@@ -35,7 +35,7 @@ object Main {
     val result = block // call-by-name
     val t1 = System.nanoTime()
     val t = (t1 - t0)/1e9
-    if (t>0.0001) println(s"Elapsed time to complete $message: " + t + "s")
+    if (t>0.00001) println(s"Elapsed time to complete $message: " + t + "s")
     result
   }
 }
