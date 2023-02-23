@@ -1,6 +1,5 @@
 import sbt.Keys.libraryDependencies
 
-import scala.collection.Seq
 
 ThisBuild / version := "0.1.0-SNAPSHOT"
 
@@ -17,7 +16,7 @@ lazy val root = (project in file("."))
       "org.locationtech.jts" % "jts-io" % "1.19.0" pomOnly(),
       "org.locationtech.jts" % "jts-modules" % "1.19.0" pomOnly(),
       "org.locationtech.jts.io" % "jts-io-common" % "1.19.0",
-      "com.github.geirolz" %% "advxml-core" % "2.5.1",
-      "org.jsoup" % "jsoup" % "1.15.3"
+      "org.jsoup" % "jsoup" % "1.15.3",
+      "org.scala-lang.modules" %% "scala-xml" % "2.1.0"
     )
   )
