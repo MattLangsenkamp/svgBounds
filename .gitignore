@@ -1,2 +1,4 @@
 target
 ./*.svg
+test.svg
+*.svg

@@ -14,7 +14,7 @@ object BoundOps {
 
   def CollapseTransforms(transformList: NonEmptyList[Transformation]): Matrix =
   // initialize with identity matrix?
-    transformList.foldLeft(Matrix(1, 0, 0, 1, 0, 0))(
+    transformList.reverse.foldLeft(Matrix(1, 0, 0, 1, 0, 0))(
       (curMatrix, transform) => transform.toMatrix * curMatrix
     )
 

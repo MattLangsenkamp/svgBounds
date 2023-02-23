@@ -48,9 +48,8 @@ object SvgParse {
   }
 
   private def potentiallyTransformMatrix(node: Node, matrix: Matrix): Matrix = {
-
       node.attributes.asAttrMap.get("transform") match
-        case Some(transform) => time {TransformParse.transformList.parse(transform)} ("matrix trans") match
+        case Some(transform) => TransformParse.transformList.parse(transform) match
           case Left(_) =>
             println("failed to parse transform matrix")
             matrix
@@ -60,14 +59,12 @@ object SvgParse {
   }
 
   def parsePath(path: Node, matrix: Matrix): Bounds =
-
-    time {
-      PathParse.svgPath.parse(path.attributes.asAttrMap("d"))} ("pathParse") match
-        case Left(_) =>
-          println("error parsing path")
-          assert(false)
-        case Right(value) =>
-          time {BoundOps.getBounds(Path(value._2) * matrix)} ("getBounds")
+    PathParse.svgPath.parse(path.attributes.asAttrMap("d")) match
+      case Left(_) =>
+        println("error parsing path")
+        assert(false)
+      case Right(value) =>
+        BoundOps.getBounds(Path(value._2) * matrix)
 
 
   def parseRect(node: Node, matrix: Matrix): Bounds =
