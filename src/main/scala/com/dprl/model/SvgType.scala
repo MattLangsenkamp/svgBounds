@@ -62,4 +62,9 @@ object SvgType {
     def projectOver(other: Point): Point = Point(other.x-math.abs(x - other.x), other.y-math.abs(y - other.y))
   }
 
+  // case class Circle(cx: Double, cy: Double, r: Double) extends SvgType {
+  //  @targetName("transform")
+  //  override def *(m: Matrix): Rect = ???
+  // }
+
 }

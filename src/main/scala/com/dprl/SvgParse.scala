@@ -45,6 +45,12 @@ object SvgParse {
       val nState = f(l._1, nBounds, '-')
       (nState, l._2 + nBounds)
     })
+    (node \ "circle").foldLeft((g._1, g._2))((l, n) => {
+      val nMatrix = potentiallyTransformMatrix(n, matrix)
+      val nBounds = parseRect(n, nMatrix)
+      val nState = f(l._1, nBounds, 'o')
+      (nState, l._2 + nBounds)
+    })
   }
 
   private def potentiallyTransformMatrix(node: Node, matrix: Matrix): Matrix = {
@@ -72,4 +78,8 @@ object SvgParse {
     val rect = Rect(m("x").toDouble, m("y").toDouble, m("width").toDouble, m("height").toDouble)
     val nRect = rect * matrix
     Bounds(nRect.x, nRect.y, nRect.x + nRect.width, nRect.y + nRect.height)
+
+  // def parseCircle(node: Node, matrix: Matrix): Bounds =
+  //   val m = node.attributes.asAttrMap
+  //  val circle = Circle(m("cx").toDouble, m("cy").toDouble, c("r").toDouble)
 }

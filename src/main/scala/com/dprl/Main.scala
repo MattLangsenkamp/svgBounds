@@ -7,14 +7,15 @@ import scala.xml.{Node, XML}
 object Main {
 
   def main(args: Array[String]): Unit = {
-    val t = "updownup"
-    
+
+    println("SvgBounds main script")
+    time {val t = "updownup"
     val fileContents = Source.fromResource(s"svg/$t.svg").getLines.mkString
     val ok = defaultParse(fileContents)
-
     val justBBoxes = ok._1.map((b, _) => b)
     val root = XML.loadString(fileContents)
-    XML.save(s"test$t.svg", Visualize.addBoundingBoxes(root, justBBoxes))
+    XML.save(s"test$t.svg", Visualize.addBoundingBoxes(root, justBBoxes))} ("bounding box generation with default parser")
+
   }
 
   def time[R](block: => R)(message: String): R = {
