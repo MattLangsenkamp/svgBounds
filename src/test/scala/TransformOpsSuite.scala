@@ -1,7 +1,8 @@
 import cats.data.NonEmptyList
-import com.dprl.model.Transformation.*
-import com.dprl.*
+import org.dprl.svgbounds.model.Transformation.*
+import org.dprl.svgbounds.*
 import cats.parse.{Parser, Parser0}
+import org.dprl.svgbounds.{BoundOps, TransformParse}
 import scala.math.abs
 
 class TransformOpsSuite extends munit.FunSuite {
@@ -25,7 +26,7 @@ class TransformOpsSuite extends munit.FunSuite {
     ("matrix(1,0,0,1,0,0) scale(8) scale(1,7)", Matrix(8, 0, 0, 56, 0, 0)),
     ("matrix(1,0,0,1,0,0) scale(8) scale(1,7) scale(2)", Matrix(16, 0, 0, 112, 0, 0)),
     ("matrix(1,0,0,1,0,0) rotate(-45)", Matrix(.7071067811865476, -.7071067811865475, .7071067811865475, .7071067811865476, 0, 0)),
-    ("translate(4, -3) rotate(90)", Matrix(0, 1, -1, 0, 3, 4)),
+    ("translate(4, -3) rotate(90)", Matrix(0, 1, -1, 0, 4, -3)),
 
   ).foreach(testTransformCollapse(_, _))
 

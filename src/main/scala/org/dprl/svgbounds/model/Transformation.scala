@@ -1,6 +1,6 @@
-package com.dprl.model
+package org.dprl.svgbounds.model
 
-import com.dprl.model.SvgType.Point
+import org.dprl.svgbounds.model.SvgType.Point
 
 import scala.annotation.targetName
 import scala.math.{cos, sin, tan}

@@ -1,12 +1,14 @@
-package com.dprl
+package org.dprl.svgbounds
+
 import cats.kernel.Monoid
 import cats.parse.Parser
-import com.dprl.model.Transformation.Matrix
-import com.dprl.Main.time
-import scala.xml.{Elem, Node, XML}
-import com.dprl.model.SvgType.{Bounds, Path, Rect, newBounds}
+import org.dprl.svgbounds.model.SvgType.{Bounds, Path, Rect, newBounds}
+import org.dprl.svgbounds.model.Transformation.Matrix
+import org.dprl.svgbounds.Main.time
+import org.dprl.svgbounds.{BoundOps, PathParse, TransformParse}
 
 import scala.util.Right
+import scala.xml.{Elem, Node, XML}
 object SvgParse {
 
   def defaultParse(svg: String): (List[(Bounds, Char)], Bounds) =
@@ -64,7 +66,7 @@ object SvgParse {
         case None => matrix
   }
 
-  def parsePath(path: Node, matrix: Matrix): Bounds =
+  private def parsePath(path: Node, matrix: Matrix): Bounds =
     PathParse.svgPath.parse(path.attributes.asAttrMap("d")) match
       case Left(_) =>
         println("error parsing path")
@@ -73,7 +75,7 @@ object SvgParse {
         BoundOps.getBounds(Path(value._2) * matrix)
 
 
-  def parseRect(node: Node, matrix: Matrix): Bounds =
+  private def parseRect(node: Node, matrix: Matrix): Bounds =
     val m = node.attributes.asAttrMap
     val rect = Rect(m("x").toDouble, m("y").toDouble, m("width").toDouble, m("height").toDouble)
     val nRect = rect * matrix

@@ -1,6 +1,8 @@
-package com.dprl
+package org.dprl.svgbounds
+
 import cats.data.NonEmptyList
-import com.dprl.SvgParse.defaultParse
+import org.dprl.svgbounds.Visualize
+import SvgParse.defaultParse
 
 import scala.io.Source
 import scala.xml.{Node, XML}

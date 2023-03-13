@@ -1,8 +1,10 @@
-package com.dprl.model
+package org.dprl.svgbounds.model
 
 import cats.data.NonEmptyList
-import com.dprl.model.SvgCommand.SvgCommand
-import com.dprl.model.Transformation.*
+import org.dprl.svgbounds.model.SvgCommand.SvgCommand
+import org.dprl.svgbounds.model.Transformation.*
+import org.dprl.svgbounds.model.SvgCommand.SvgCommand
+import org.dprl.svgbounds.model.Transformation.Matrix
 
 import scala.annotation.targetName
 import scala.math.{cos, max, min, sin, tan}

@@ -1,9 +1,9 @@
 import sbt.Keys.libraryDependencies
 
 
-ThisBuild / version := "0.1.0-SNAPSHOT"
+ThisBuild / version := "0.1.0"
 
-ThisBuild / scalaVersion := "3.1.3"
+ThisBuild / scalaVersion := "3.2.2"
 
 lazy val root = (project in file("."))
   .settings(
@@ -16,7 +16,7 @@ lazy val root = (project in file("."))
       "org.locationtech.jts" % "jts-io" % "1.19.0" pomOnly(),
       "org.locationtech.jts" % "jts-modules" % "1.19.0" pomOnly(),
       "org.locationtech.jts.io" % "jts-io-common" % "1.19.0",
-      "org.jsoup" % "jsoup" % "1.15.3",
+      "org.jsoup" % "jsoup" % "1.15.4",
       "org.scala-lang.modules" %% "scala-xml" % "2.1.0"
     )
   )

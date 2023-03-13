@@ -1,9 +1,9 @@
 import cats.data.NonEmptyList
-import com.dprl.model.SvgCommand.*
-import com.dprl.*
-import com.dprl.model.SvgType.{Point, Bounds}
-
+import org.dprl.svgbounds.model.SvgCommand.*
+import org.dprl.svgbounds.*
+import org.dprl.svgbounds.model.SvgType.{Bounds, Point}
 import cats.parse.{Parser, Parser0}
+import org.dprl.svgbounds.CurveUtils
 
 class CurveSuite extends munit.FunSuite {
   def testQuadBezier(bounds: Bounds, start: Point, com: Q | q_ )(implicit loc: munit.Location): Unit = {

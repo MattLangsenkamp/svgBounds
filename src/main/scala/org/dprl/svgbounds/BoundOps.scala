@@ -1,11 +1,12 @@
-package com.dprl
+package org.dprl.svgbounds
 
 import cats.data.NonEmptyList
 import cats.parse.Parser
-import com.dprl.model.SvgCommand.*
-import com.dprl.model.Transformation.*
-import com.dprl.model.SvgType.{Bounds, Path, Point}
-import com.dprl.CurveUtils.*
+import org.dprl.svgbounds.CurveUtils
+import org.dprl.svgbounds.model.SvgType.{Bounds, Path, Point}
+import org.dprl.svgbounds.model.Transformation.*
+import org.dprl.svgbounds.model.SvgCommand.*
+import org.dprl.svgbounds.CurveUtils.*
 
 import scala.annotation.targetName
 import scala.xml.Elem

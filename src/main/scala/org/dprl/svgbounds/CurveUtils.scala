@@ -1,8 +1,9 @@
-package com.dprl
-import com.dprl.model.SvgType.{Bounds, Point}
+package org.dprl.svgbounds
+
+import org.dprl.svgbounds.model.SvgType.{Bounds, Point}
 import sun.rmi.transport.Endpoint
 
-import scala.math.{acos, atan, cos, max, min, pow, sin, sqrt, tan}
+import scala.math.*
 
 object CurveUtils {
 

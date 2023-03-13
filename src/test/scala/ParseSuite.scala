@@ -1,8 +1,10 @@
 import cats.data.NonEmptyList
-import com.dprl.*
-import com.dprl.model.SvgType.Point
+import org.dprl.svgbounds.*
+import org.dprl.svgbounds.model.SvgType.Point
 import cats.parse.{Parser, Parser0}
-import com.dprl.model.SvgCommand.*
+import org.dprl.svgbounds.PathParse
+import org.dprl.svgbounds.model.SvgCommand.*
+
 class ParseSuite extends munit.FunSuite {
 
   def testCommand[A <: SvgCommand](path: String, outCommand: NonEmptyList[A], parser: Parser[NonEmptyList[A]])(implicit loc: munit.Location): Unit = {
@@ -272,6 +274,44 @@ class ParseSuite extends munit.FunSuite {
     ("M 1, 2 V 1 V 2E2", NonEmptyList(M(Point(1, 2)), List(V(1), V(200)))),
     ("M 1, 2 1, 2 V 1 V 2E2", NonEmptyList(M(Point(1, 2)), List(M(Point(1, 2)), V(1), V(200)))),
     ("M 1, 2 1, 2 V 1 V 2E2 m 22 33", NonEmptyList(M(Point(1, 2)), List(M(Point(1, 2)), V(1), V(200), m_(Point(22, 33))))),
-    ("M231 637Q204 637 199 638", NonEmptyList(M(Point(231, 637)), List(Q(Point(204, 637), Point(199, 638)))))
-  ).foreach(testCommand0(_, _, PathParse.svgPath))
+    ("M231 637Q204 637 199 638", NonEmptyList(M(Point(231, 637)), List(Q(Point(204, 637), Point(199, 638))))),
+    ("M370 305T349 305T313 320T297 358Q297 381 312 396Q317" +
+      " 401 317 402T307 404Q281 408 258 408Q209 408 178 " +
+      "376Q131 329 131 219Q131 137 162 90Q203 29 272 29Q313 " +
+      "29 338 55T374 117Q376 125 379 127T395 129H409Q415 123 " +
+      "415 120Q415 116 411 104T395 71T366 33T318 2T249 -11Q163" +
+      " -11 99 53T34 214Q34 318 99 383T250 448T370 421T404" +
+      " 357Q404 334 387 320Z", NonEmptyList.of(
+      M(Point(370, 305)),
+      T(Point(349, 305)),
+      T(Point(313.0,320.0)),
+      T(Point(297.0,358.0)),
+      Q(Point(297.0,381.0), Point(312.0,396.0)),
+      Q(Point(317.0,401.0), Point(317.0,402.0)),
+      T(Point(307.0,404.0)),
+      Q(Point(281, 408), Point(258, 408)),
+      Q(Point(209, 408), Point(178, 376)),
+      Q(Point(131, 329), Point(131, 219)),
+      Q(Point(131, 137), Point(162, 90)),
+      Q(Point(203, 29), Point(272, 29)),
+      Q(Point(313, 29), Point(338, 55)),
+      T(Point(374, 117)),
+      Q(Point(376, 125), Point(379, 127)),
+      T(Point(395, 129)),
+      H(409),
+      Q(Point(415, 123), Point(415, 120)),
+      Q(Point(415, 116), Point(411, 104)),
+      T(Point(395, 71)),
+      T(Point(366, 33)),
+      T(Point(318, 2)),
+      T(Point(249, -11)),
+      Q(Point(163, -11), Point(99, 53)),
+      T(Point(34, 214)),
+      Q(Point(34, 318),  Point(99, 383)),
+      T(Point(250, 448)),
+      T(Point(370, 421)),
+      T(Point(404, 357)),
+      Q(Point(404, 334), Point(387, 320)),
+      Z())
+    )).foreach(testCommand0(_, _, PathParse.svgPath))
 }

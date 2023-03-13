@@ -1,6 +1,7 @@
-package com.dprl.model
-import com.dprl.model.Transformation.*
-import com.dprl.model.SvgType.Point
+package org.dprl.svgbounds.model
+
+import org.dprl.svgbounds.model.SvgType.Point
+import Transformation.Matrix
 
 
 // derived from https://svgwg.org/svg2-draft/paths.html#PathElement

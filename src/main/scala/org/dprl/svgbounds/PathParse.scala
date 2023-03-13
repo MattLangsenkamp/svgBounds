@@ -1,10 +1,10 @@
-package com.dprl
+package org.dprl.svgbounds
 
-import com.dprl.model.SvgCommand.*
-import com.dprl.model.SvgType.Point
 import cats.data.NonEmptyList
-import cats.parse.{Parser, Parser0}
 import cats.parse.Parser.{char, charIn, string}
+import cats.parse.{Parser, Parser0}
+import org.dprl.svgbounds.model.SvgType.Point
+import org.dprl.svgbounds.model.SvgCommand.*
 
 
 object PathParse {

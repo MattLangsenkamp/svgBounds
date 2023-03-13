@@ -1,8 +1,10 @@
-package com.dprl
-import com.dprl.model.Transformation.*
+package org.dprl.svgbounds
+
 import cats.data.NonEmptyList
-import cats.parse.{Parser, Parser0}
 import cats.parse.Parser.{char, charIn, string}
+import cats.parse.{Parser, Parser0}
+import org.dprl.svgbounds.PathParse
+import org.dprl.svgbounds.model.Transformation.*
 
 // derived from https://www.w3.org/TR/css-transforms-1/#svg-syntax
 object TransformParse {

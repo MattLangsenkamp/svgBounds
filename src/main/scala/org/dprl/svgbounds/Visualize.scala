@@ -1,7 +1,8 @@
-package com.dprl
-import com.dprl.model.SvgType.Bounds
+package org.dprl.svgbounds
 
-import scala.xml.{Elem, Group, SpecialNode, XML, Node}
+import org.dprl.svgbounds.model.SvgType.Bounds
+
+import scala.xml.*
 object Visualize {
 
   def addBoundingBoxes(svg: Elem, boundingBoxes: List[Bounds]): Node =

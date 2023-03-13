@@ -1,7 +1,8 @@
 import cats.data.NonEmptyList
-import com.dprl.model.Transformation.*
-import com.dprl.*
+import org.dprl.svgbounds.model.Transformation.*
+import org.dprl.svgbounds.*
 import cats.parse.{Parser, Parser0}
+import org.dprl.svgbounds.TransformParse
 
 class TransformParseSuite extends munit.FunSuite {
   def testTransform[A <: Transformation](path: String, outCommand: A, parser: Parser[A])(implicit loc: munit.Location): Unit = {
